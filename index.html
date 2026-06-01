@@ -1,1 +1,1096 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mensagem do Universo — Seu biscoito da sorte diário</title>
+  <meta name="description" content="O Universo quer o melhor pra você. Abra seu biscoito da sorte diário e receba uma mensagem gerada especialmente para o seu momento.">
+  <meta property="og:title" content="Mensagem do Universo">
+  <meta property="og:description" content="O Universo quer o melhor pra você. Uma mensagem única, gerada por IA, só pra você — todo dia.">
+  <meta property="og:url" content="https://mensagemdouniverso.com.br">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8CC7E;
+      --gold-pale: #F7EDD4;
+      --gold-dim: #8A6620;
+      --ink: #1A1208;
+      --ink-mid: #4A3F2F;
+      --ink-soft: #8C7B65;
+      --parchment: #FBF7F0;
+      --parchment-dark: #F2EBE0;
+      --white: #FFFFFF;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--parchment);
+      color: var(--ink);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(ellipse at 20% 10%, rgba(201,168,76,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(201,168,76,0.06) 0%, transparent 50%);
+      pointer-events: none; z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='30' y='32' text-anchor='middle' font-size='6' fill='%23C9A84C' opacity='0.1'%3E✦%3C/text%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    /* HEADER */
+    header {
+      position: relative; z-index: 10;
+      padding: 1.5rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 0.5px solid rgba(201,168,76,0.2);
+    }
+    .logo { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; color: var(--ink); letter-spacing: 0.04em; text-decoration: none; }
+    .logo span { color: var(--gold); }
+    nav { display: flex; gap: 2rem; align-items: center; }
+    nav a { font-size: 0.8rem; color: var(--ink-soft); text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+    nav a:hover { color: var(--gold); }
+    .nav-instagram { display: flex; align-items: center; gap: 6px; border: 0.5px solid rgba(201,168,76,0.4); padding: 6px 14px; border-radius: 99px; font-size: 0.75rem !important; color: var(--gold-dim) !important; }
+    .nav-instagram:hover { background: var(--gold-pale); }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 10;
+      min-height: calc(100vh - 72px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 4rem 1.5rem 3rem; text-align: center;
+    }
+    .eyebrow { font-size: 0.7rem; letter-spacing: 0.22em; color: var(--gold); text-transform: uppercase; margin-bottom: 1.25rem; font-weight: 500; }
+    .hero-title { font-family: var(--serif); font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 300; line-height: 1.15; color: var(--ink); margin-bottom: 1.25rem; max-width: 700px; }
+    .hero-title em { font-style: italic; color: var(--gold-dim); }
+    .hero-sub { font-size: 1rem; color: var(--ink-soft); line-height: 1.7; max-width: 400px; margin-bottom: 2.5rem; font-weight: 300; }
+
+    /* MOOD */
+    .mood-section { margin-bottom: 1.75rem; }
+    .mood-label { font-size: 0.75rem; color: var(--ink-soft); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .mood-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .mood-pill { font-family: var(--sans); font-size: 0.8rem; padding: 6px 16px; border-radius: 99px; border: 0.5px solid rgba(201,168,76,0.35); background: transparent; color: var(--ink-soft); cursor: pointer; transition: all 0.2s; }
+    .mood-pill:hover, .mood-pill.active { border-color: var(--gold); color: var(--gold-dim); background: var(--gold-pale); font-weight: 500; }
+
+    /* COOKIE */
+    .cookie-stage { position: relative; width: 320px; height: 220px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+    .cookie-aura { position: absolute; width: 220px; height: 44px; border-radius: 50%; bottom: 10px; left: 50%; transform: translateX(-50%); background: radial-gradient(ellipse, rgba(180,140,60,0.2) 0%, transparent 70%); animation: aura-pulse 3.2s ease-in-out infinite; }
+    @keyframes aura-pulse { 0%,100%{opacity:0.35;transform:translateX(-50%) scaleX(1)} 50%{opacity:0.7;transform:translateX(-50%) scaleX(1.18)} }
+    .cookie-btn { background: none; border: none; cursor: pointer; padding: 0; animation: cookie-float 4.5s ease-in-out infinite; position: relative; }
+    .cookie-btn:hover { filter: brightness(1.06); }
+    @keyframes cookie-float { 0%,100%{transform:translateY(0) rotate(-0.8deg)} 50%{transform:translateY(-12px) rotate(0.8deg)} }
+    .cookie-btn.opening { animation: none; }
+    .cookie-btn.opening .c-top { animation: open-top 0.7s cubic-bezier(.4,0,.2,1) forwards; transform-origin: 140px 87px; }
+    .cookie-btn.opening .c-bot { animation: open-bot 0.7s cubic-bezier(.4,0,.2,1) forwards; transform-origin: 140px 87px; }
+    @keyframes open-top { to { transform: rotate(-38deg) translateY(-8px); } }
+    @keyframes open-bot { to { transform: rotate(28deg) translateY(6px); } }
+    .sparkles { position: absolute; inset: -30px; pointer-events: none; display: none; }
+    .sparkle { position: absolute; color: var(--gold); opacity: 0; font-size: 14px; }
+    .sp1{top:4px;left:20%;animation:spark-pop 0.5s 0.28s forwards}
+    .sp2{top:8px;right:18%;animation:spark-pop 0.5s 0.44s forwards;font-size:11px}
+    .sp3{bottom:14px;left:6%;animation:spark-pop 0.5s 0.52s forwards;font-size:10px}
+    .sp4{bottom:8px;right:14%;animation:spark-pop 0.5s 0.36s forwards}
+    .sp5{top:46%;left:0;animation:spark-pop 0.5s 0.6s forwards;font-size:9px}
+    .sp6{top:38%;right:0;animation:spark-pop 0.5s 0.32s forwards;font-size:13px}
+    @keyframes spark-pop { 0%{opacity:0;transform:scale(0) rotate(0)} 55%{opacity:1;transform:scale(1.3) rotate(20deg)} 100%{opacity:1;transform:scale(1) rotate(15deg)} }
+    .cookie-hint { font-size: 0.8rem; color: var(--ink-soft); letter-spacing: 0.06em; transition: opacity 0.4s; }
+
+    /* EMAIL MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(26,18,8,0.55); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1.5rem; animation: fade-in 0.2s ease; }
+    .modal-overlay.hidden { display: none; }
+    @keyframes fade-in { from{opacity:0} to{opacity:1} }
+    .modal-box { background: var(--white); border-radius: 20px; padding: 2.5rem 2rem; max-width: 420px; width: 100%; text-align: center; position: relative; animation: slide-up 0.3s ease; }
+    @keyframes slide-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .modal-title { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; color: var(--ink); margin-bottom: 0.5rem; }
+    .modal-sub { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.6; margin-bottom: 1.5rem; }
+    .modal-input { width: 100%; padding: 12px 16px; border: 0.5px solid rgba(201,168,76,0.4); border-radius: 10px; font-family: var(--sans); font-size: 0.9rem; color: var(--ink); background: var(--parchment); outline: none; transition: border-color 0.2s; margin-bottom: 8px; }
+    .modal-input:focus { border-color: var(--gold); }
+    .modal-name { width: 100%; padding: 12px 16px; border: 0.5px solid rgba(201,168,76,0.4); border-radius: 10px; font-family: var(--sans); font-size: 0.9rem; color: var(--ink); background: var(--parchment); outline: none; transition: border-color 0.2s; margin-bottom: 1rem; }
+    .modal-name:focus { border-color: var(--gold); }
+    .modal-btn { width: 100%; padding: 13px; background: var(--ink); color: var(--gold-light); border: none; border-radius: 10px; font-family: var(--sans); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s; letter-spacing: 0.04em; margin-bottom: 0.75rem; }
+    .modal-btn:hover { background: var(--ink-mid); }
+    .modal-skip { font-size: 0.78rem; color: var(--ink-soft); cursor: pointer; background: none; border: none; font-family: var(--sans); }
+    .modal-skip:hover { color: var(--gold-dim); }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.2rem; color: var(--ink-soft); cursor: pointer; line-height: 1; }
+
+    /* PACOTES */
+    .pacotes-overlay { position: fixed; inset: 0; background: rgba(26,18,8,0.55); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1.5rem; animation: fade-in 0.2s ease; }
+    .pacotes-overlay.hidden { display: none; }
+    .pacotes-box { background: var(--white); border-radius: 20px; padding: 2.5rem 2rem; max-width: 520px; width: 100%; text-align: center; animation: slide-up 0.3s ease; position: relative; }
+    .pacotes-title { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; margin-bottom: 0.5rem; }
+    .pacotes-sub { font-size: 0.88rem; color: var(--ink-soft); margin-bottom: 1.75rem; }
+    .pacotes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1.25rem; }
+    .pacote-card { border: 0.5px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 1.25rem 0.75rem; cursor: pointer; transition: all 0.2s; position: relative; }
+    .pacote-card:hover { border-color: var(--gold); background: var(--gold-pale); }
+    .pacote-card.selected { border: 2px solid var(--gold); background: var(--gold-pale); }
+    .pacote-popular { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--white); font-size: 10px; padding: 2px 10px; border-radius: 99px; font-weight: 500; white-space: nowrap; }
+    .pacote-emoji { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+    .pacote-nome { font-size: 12px; color: var(--ink-soft); margin-bottom: 4px; }
+    .pacote-qtd { font-size: 1.5rem; font-weight: 500; color: var(--ink); }
+    .pacote-biscoitos { font-size: 11px; color: var(--ink-soft); margin-bottom: 4px; }
+    .pacote-preco { font-size: 1rem; font-weight: 500; color: var(--gold-dim); }
+    .pacote-social { font-size: 11px; color: #2d7a4f; margin-top: 4px; }
+    .pix-btn { width: 100%; padding: 14px; background: #00b4d8; color: white; border: none; border-radius: 12px; font-family: var(--sans); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.75rem; }
+    .pix-btn:hover { background: #0096c7; }
+    .pix-info { font-size: 0.75rem; color: var(--ink-soft); }
+
+    /* RESULT */
+    .result-section { display: none; max-width: 540px; width: 100%; margin: 0 auto; animation: reveal 0.7s 0.3s both; }
+    .result-section.show { display: block; }
+    @keyframes reveal { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    /* CARD COMPARTILHÁVEL */
+    .share-card-wrap { margin-bottom: 1.5rem; }
+    .share-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 1/1;
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2.5rem;
+      text-align: center;
+      cursor: default;
+    }
+    .share-card-bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.45) saturate(0.8);
+      transition: opacity 0.5s;
+    }
+    .share-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(20,12,4,0.3) 0%, rgba(10,6,2,0.65) 100%);
+    }
+    .share-card-content { position: relative; z-index: 2; }
+    .share-card-brand { font-size: 11px; letter-spacing: 0.2em; color: rgba(201,168,76,0.9); text-transform: uppercase; margin-bottom: 1.5rem; }
+    .share-card-quote { font-family: var(--serif); font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-weight: 300; font-style: italic; line-height: 1.65; color: #ffffff; margin-bottom: 2rem; text-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+    .share-card-divider { width: 40px; height: 1px; background: rgba(201,168,76,0.6); margin: 0 auto 1rem; }
+    .share-card-name { font-family: var(--serif); font-size: 0.95rem; color: rgba(255,255,255,0.75); letter-spacing: 0.06em; }
+    .share-card-site { font-size: 0.68rem; letter-spacing: 0.12em; color: rgba(201,168,76,0.6); text-transform: uppercase; margin-top: 1.5rem; }
+
+    /* BG THEMES */
+    .bg-cosmos { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80'); }
+    .bg-forest { background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80'); }
+    .bg-ocean { background-image: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&q=80'); }
+    .bg-mountain { background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80'); }
+    .bg-desert { background-image: url('https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80'); }
+    .bg-aurora { background-image: url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80'); }
+
+    /* BG SELECTOR */
+    .bg-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .bg-thumb { width: 40px; height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; background-size: cover; background-position: center; }
+    .bg-thumb.active { border-color: var(--gold); transform: scale(1.1); }
+    .bg-thumb-cosmos { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=100'); }
+    .bg-thumb-forest { background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=100'); }
+    .bg-thumb-ocean { background-image: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=100'); }
+    .bg-thumb-mountain { background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=100'); }
+    .bg-thumb-desert { background-image: url('https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=100'); }
+    .bg-thumb-aurora { background-image: url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=100'); }
+
+    /* SHARE BUTTONS */
+    .share-label { font-size: 0.7rem; letter-spacing: 0.14em; color: var(--ink-soft); text-transform: uppercase; text-align: center; margin-bottom: 0.875rem; }
+    .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .share-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 12px; border-radius: 10px; border: 0.5px solid rgba(201,168,76,0.3); background: var(--white); color: var(--ink-mid); font-family: var(--sans); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.18s; }
+    .share-btn:hover { background: var(--gold-pale); border-color: var(--gold); }
+    .share-btn.whatsapp { color: #1a9e4e; border-color: rgba(37,211,102,0.3); }
+    .share-btn.whatsapp:hover { background: #f0fff5; border-color: #25d366; }
+    .share-btn.instagram { color: #c13584; border-color: rgba(193,53,132,0.3); }
+    .share-btn.instagram:hover { background: #fff0f7; border-color: #c13584; }
+    .share-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .download-btn { width: 100%; padding: 12px; background: var(--ink); color: var(--gold-light); border: none; border-radius: 10px; font-family: var(--sans); font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; transition: background 0.2s; letter-spacing: 0.03em; }
+    .download-btn:hover { background: var(--ink-mid); }
+    .nova-btn { display: block; width: 100%; margin-top: 6px; padding: 10px; background: none; border: none; font-family: var(--sans); font-size: 0.78rem; color: var(--ink-soft); cursor: pointer; }
+    .nova-btn:hover { color: var(--gold-dim); }
+    .cd-bar { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 1.25rem; padding: 10px 16px; background: var(--parchment-dark); border-radius: 10px; border: 0.5px solid rgba(201,168,76,0.15); font-size: 0.78rem; color: var(--ink-soft); }
+
+    /* VIRAL BANNER */
+    .viral-banner { background: var(--gold-pale); border: 0.5px solid rgba(201,168,76,0.4); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; text-align: center; font-size: 0.82rem; color: var(--ink-mid); line-height: 1.6; display: none; }
+    .viral-banner.show { display: block; }
+    .viral-banner strong { color: var(--gold-dim); }
+
+    /* TYPING */
+    .typing-dots { display: flex; justify-content: center; gap: 6px; padding: 2rem 0; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(201,168,76,0.5); animation: dot-pulse 1.4s ease-in-out infinite; }
+    .dot:nth-child(2){animation-delay:0.2s} .dot:nth-child(3){animation-delay:0.4s}
+    @keyframes dot-pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+
+    /* SECTIONS */
+    .how-section { position: relative; z-index: 10; padding: 5rem 1.5rem; background: var(--white); border-top: 0.5px solid rgba(201,168,76,0.15); border-bottom: 0.5px solid rgba(201,168,76,0.15); text-align: center; }
+    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.75rem; }
+    .section-title { font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 300; color: var(--ink); margin-bottom: 3rem; line-height: 1.3; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 2rem; max-width: 800px; margin: 3rem auto 0; }
+    .step { text-align: center; }
+    .step-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .step-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; color: var(--ink); margin-bottom: 0.5rem; }
+    .step-text { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.65; }
+    .testimonials { position: relative; z-index: 10; padding: 5rem 1.5rem; text-align: center; border-top: 0.5px solid rgba(201,168,76,0.15); }
+    .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1.25rem; max-width: 900px; margin: 0 auto; }
+    .testi-card { background: var(--white); border: 0.5px solid rgba(201,168,76,0.2); border-radius: 14px; padding: 1.75rem 1.5rem; text-align: left; }
+    .testi-stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 0.875rem; }
+    .testi-text { font-family: var(--serif); font-size: 1rem; font-weight: 300; line-height: 1.7; color: var(--ink-mid); margin-bottom: 1rem; font-style: italic; }
+    .testi-author { font-size: 0.75rem; color: var(--ink-soft); }
+    .instagram-cta { position: relative; z-index: 10; padding: 5rem 1.5rem; text-align: center; }
+    .ig-card { max-width: 500px; margin: 0 auto; background: var(--white); border: 0.5px solid rgba(201,168,76,0.25); border-radius: 20px; padding: 3rem 2rem; }
+    .ig-icon { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+    .ig-title { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; color: var(--ink); margin-bottom: 0.75rem; }
+    .ig-text { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.7; margin-bottom: 1.75rem; }
+    .ig-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color: white; border: none; border-radius: 99px; font-family: var(--sans); font-size: 0.85rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: opacity 0.2s; }
+    .ig-btn:hover { opacity: 0.9; }
+    footer { position: relative; z-index: 10; padding: 2rem 1.5rem; border-top: 0.5px solid rgba(201,168,76,0.15); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { font-family: var(--serif); font-size: 1rem; color: var(--ink-soft); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: 0.75rem; color: var(--ink-soft); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.72rem; color: var(--ink-soft); opacity: 0.6; }
+
+    @media (max-width: 600px) {
+      header { padding: 1rem 1.25rem; }
+      nav a:not(.nav-instagram) { display: none; }
+      .hero { padding: 3rem 1.25rem 2rem; }
+      footer { flex-direction: column; align-items: flex-start; }
+      .pacotes-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- MODAL: CADASTRO -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div style="font-size:2rem;margin-bottom:1rem;">🥠</div>
+    <h2 class="modal-title">Qual é o seu nome?</h2>
+    <p class="modal-sub">Sua mensagem será personalizada e aparecerá no card para compartilhar — mostrando ao mundo que foi gerada só para você.</p>
+    <input class="modal-name" id="inputNome" type="text" placeholder="Seu nome (ex: Ana)" maxlength="30">
+    <input class="modal-input" id="inputEmail" type="email" placeholder="Seu e-mail (para acessar biscoitos pagos)">
+    <button class="modal-btn" onclick="confirmarCadastro()">✦ Abrir meu biscoito</button>
+    <button class="modal-skip" onclick="abrirSemCadastro()">Continuar sem personalizar</button>
+  </div>
+</div>
+
+<!-- MODAL: PACOTES -->
+<div class="pacotes-overlay hidden" id="pacotesOverlay">
+  <div class="pacotes-box">
+    <button class="modal-close" onclick="fecharPacotes()">✕</button>
+    <h2 class="pacotes-title">Escolha seu pacote</h2>
+    <p class="pacotes-sub">Cada biscoito pago vem com frase personalizada + card exclusivo para compartilhar.<br><span style="color:#2d7a4f;font-size:0.82rem;">♥ 20% de cada pacote vai para uma causa social</span></p>
+    <div class="pacotes-grid">
+      <div class="pacote-card" id="p1" onclick="selecionarPacote('p1',490,'Starter (10 biscoitos)')">
+        <span class="pacote-emoji">🥠</span>
+        <div class="pacote-nome">Starter</div>
+        <div class="pacote-qtd">10</div>
+        <div class="pacote-biscoitos">biscoitos</div>
+        <div class="pacote-preco">R$ 4,90</div>
+        <div class="pacote-social">♥ R$ 0,98 p/ causa</div>
+      </div>
+      <div class="pacote-card selected" id="p2" onclick="selecionarPacote('p2',1290,'Mensal (30 biscoitos)')">
+        <div class="pacote-popular">Mais popular</div>
+        <span class="pacote-emoji">🥠</span>
+        <div class="pacote-nome">Mensal</div>
+        <div class="pacote-qtd">30</div>
+        <div class="pacote-biscoitos">biscoitos</div>
+        <div class="pacote-preco">R$ 12,90</div>
+        <div class="pacote-social">♥ R$ 2,58 p/ causa</div>
+      </div>
+      <div class="pacote-card" id="p3" onclick="selecionarPacote('p3',3490,'Família (100 biscoitos)')">
+        <span class="pacote-emoji">🥠</span>
+        <div class="pacote-nome">Família</div>
+        <div class="pacote-qtd">100</div>
+        <div class="pacote-biscoitos">biscoitos</div>
+        <div class="pacote-preco">R$ 34,90</div>
+        <div class="pacote-social">♥ R$ 6,98 p/ causa</div>
+      </div>
+    </div>
+    <button class="pix-btn" onclick="pagarPix()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M11.9 1c-.8 0-1.6.3-2.1.9L4.4 7.2c-.2.2-.4.3-.7.3H2.5C1.7 7.5 1 8.2 1 9v6c0 .8.7 1.5 1.5 1.5h1.2c.3 0 .5.1.7.3l5.4 5.3c.6.6 1.3.9 2.1.9s1.6-.3 2.1-.9l5.4-5.3c.2-.2.4-.3.7-.3h1.2c.8 0 1.5-.7 1.5-1.5V9c0-.8-.7-1.5-1.5-1.5h-1.2c-.3 0-.5-.1-.7-.3L14 1.9C13.5 1.3 12.7 1 11.9 1z"/></svg>
+      Pagar com Pix — <span id="pixValor">R$ 12,90</span>
+    </button>
+    <p class="pix-info">Confirmação instantânea • Sem cadastro de cartão • Seguro</p>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <a href="/" class="logo">✦ Mensagem do <span>Universo</span></a>
+  <nav>
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#depoimentos">Depoimentos</a>
+    <a href="https://instagram.com/mensagemdouniverso" target="_blank" class="nav-instagram">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      @mensagemdouniverso
+    </a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<main>
+  <section class="hero">
+    <div class="eyebrow">✦ seu biscoito da sorte diário ✦</div>
+    <h1 class="hero-title">O Universo quer<br>o <em>melhor</em> pra você</h1>
+    <p class="hero-sub" id="heroSub">Veja o que ele tem a dizer hoje. Uma mensagem única, gerada por inteligência artificial, especialmente para o seu momento.</p>
+
+    <div class="mood-section" id="moodSection">
+      <div class="mood-label">Como você está se sentindo?</div>
+      <div class="mood-pills">
+        <button class="mood-pill active" data-mood="geral" onclick="setMood(this)">Geral</button>
+        <button class="mood-pill" data-mood="ansioso" onclick="setMood(this)">Ansioso</button>
+        <button class="mood-pill" data-mood="triste" onclick="setMood(this)">Triste</button>
+        <button class="mood-pill" data-mood="animado" onclick="setMood(this)">Animado</button>
+        <button class="mood-pill" data-mood="cansado" onclick="setMood(this)">Cansado</button>
+        <button class="mood-pill" data-mood="grato" onclick="setMood(this)">Grato</button>
+      </div>
+    </div>
+
+    <div id="cookieArea">
+      <div class="cookie-stage">
+        <div class="cookie-aura"></div>
+        <button class="cookie-btn" id="cookieBtn" onclick="handleCookieClick()" aria-label="Abrir biscoito da sorte">
+          <div class="sparkles" id="sparkles">
+            <span class="sparkle sp1">✦</span><span class="sparkle sp2">✦</span>
+            <span class="sparkle sp3">✦</span><span class="sparkle sp4">✦</span>
+            <span class="sparkle sp5">✦</span><span class="sparkle sp6">✦</span>
+          </div>
+          <svg width="280" height="174" viewBox="0 0 280 174" fill="none" style="overflow:visible">
+            <defs>
+              <linearGradient id="cg" x1="140" y1="12" x2="140" y2="162" gradientUnits="userSpaceOnUse">
+                <stop offset="0%"   stop-color="#DEB870"/>
+                <stop offset="28%"  stop-color="#C8A050"/>
+                <stop offset="60%"  stop-color="#B88C3A"/>
+                <stop offset="100%" stop-color="#9A7028"/>
+              </linearGradient>
+            </defs>
+            <ellipse cx="140" cy="170" rx="100" ry="5" fill="rgba(0,0,0,0.08)"/>
+            <g class="c-top">
+              <path d="M 18 88 C 20 52, 72 12, 140 12 C 208 12, 260 52, 262 88 C 200 80, 80 80, 18 88 Z" fill="url(#cg)"/>
+              <ellipse cx="140" cy="46" rx="68" ry="28" fill="#F0D080" opacity="0.22"/>
+              <ellipse cx="112" cy="36" rx="22" ry="12" fill="#FAE8A8" opacity="0.28" transform="rotate(-12 112 36)"/>
+              <path d="M 52 28 Q 40 55 44 80" fill="none" stroke="#9A6C20" stroke-width="1.1" opacity="0.2" stroke-linecap="round"/>
+              <path d="M 78 18 Q 68 52 70 80" fill="none" stroke="#9A6C20" stroke-width="0.9" opacity="0.16" stroke-linecap="round"/>
+              <path d="M 228 28 Q 240 55 236 80" fill="none" stroke="#9A6C20" stroke-width="1.1" opacity="0.2" stroke-linecap="round"/>
+              <path d="M 202 18 Q 212 52 210 80" fill="none" stroke="#9A6C20" stroke-width="0.9" opacity="0.16" stroke-linecap="round"/>
+              <path d="M 18 88 C 20 52, 72 12, 140 12 C 208 12, 260 52, 262 88 C 252 72, 220 20, 140 18 C 60 20, 28 72, 18 88 Z" fill="#7A4C14" opacity="0.07"/>
+              <path d="M 20 87 C 82 79, 198 79, 260 87" fill="none" stroke="#8A5C18" stroke-width="2.2" opacity="0.55" stroke-linecap="round"/>
+              <ellipse cx="22" cy="88" rx="16" ry="10" fill="#7A4C14" opacity="0.22"/>
+              <ellipse cx="258" cy="88" rx="16" ry="10" fill="#7A4C14" opacity="0.22"/>
+            </g>
+            <g class="c-bot">
+              <path d="M 18 88 C 80 96, 200 96, 262 88 C 260 124, 208 162, 140 162 C 72 162, 20 124, 18 88 Z" fill="url(#cg)"/>
+              <ellipse cx="140" cy="130" rx="55" ry="20" fill="#C8A450" opacity="0.14"/>
+              <path d="M 20 89 C 82 97, 198 97, 260 89" fill="none" stroke="#8A5C18" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+              <ellipse cx="22" cy="88" rx="16" ry="10" fill="#7A4C14" opacity="0.22"/>
+              <ellipse cx="258" cy="88" rx="16" ry="10" fill="#7A4C14" opacity="0.22"/>
+            </g>
+            <path d="M 20 87 C 82 84, 198 84, 260 87 C 198 91, 82 91, 20 87 Z" fill="#5A3408" opacity="0.35"/>
+            <path d="M 28 87.5 C 90 86, 190 86, 252 87.5" fill="none" stroke="#3A2005" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
+            <path d="M 100 87 C 115 85.5, 165 85.5, 180 87 C 165 88.5, 115 88.5, 100 87 Z" fill="#2A1404" opacity="0.4"/>
+            <rect x="122" y="83" width="36" height="9" rx="1.5" fill="#F4EDD4" opacity="0.85"/>
+            <line x1="126" y1="86.5" x2="154" y2="86.5" stroke="#C8B898" stroke-width="0.7" opacity="0.7"/>
+            <line x1="126" y1="89.5" x2="150" y2="89.5" stroke="#C8B898" stroke-width="0.6" opacity="0.55"/>
+          </svg>
+        </button>
+      </div>
+      <p class="cookie-hint" id="cookieHint">Toque no biscoito para revelar ✦</p>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="result-section" id="resultSection">
+
+      <!-- CARD VIRAL COMPARTILHÁVEL -->
+      <div class="share-card-wrap">
+        <div class="share-card" id="shareCard">
+          <div class="share-card-bg bg-cosmos" id="shareCardBg"></div>
+          <div class="share-card-overlay"></div>
+          <div class="share-card-content">
+            <div class="share-card-brand">✦ Mensagem do Universo ✦</div>
+            <div class="share-card-quote" id="shareCardQuote">
+              <div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+            </div>
+            <div class="share-card-divider"></div>
+            <div class="share-card-name" id="shareCardName"></div>
+            <div class="share-card-site">mensagemdouniverso.com.br</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SELETOR DE FUNDO -->
+      <div style="margin-bottom:0.75rem;">
+        <div style="font-size:0.7rem;letter-spacing:0.1em;color:var(--ink-soft);text-transform:uppercase;text-align:center;margin-bottom:0.6rem;">Escolha o fundo do seu card</div>
+        <div class="bg-selector">
+          <div class="bg-thumb bg-thumb-cosmos active" onclick="setBg('cosmos',this)" title="Cosmos"></div>
+          <div class="bg-thumb bg-thumb-forest" onclick="setBg('forest',this)" title="Floresta"></div>
+          <div class="bg-thumb bg-thumb-ocean" onclick="setBg('ocean',this)" title="Oceano"></div>
+          <div class="bg-thumb bg-thumb-mountain" onclick="setBg('mountain',this)" title="Montanha"></div>
+          <div class="bg-thumb bg-thumb-desert" onclick="setBg('desert',this)" title="Deserto"></div>
+          <div class="bg-thumb bg-thumb-aurora" onclick="setBg('aurora',this)" title="Aurora"></div>
+        </div>
+      </div>
+
+      <!-- BANNER VIRAL (para frases pagas) -->
+      <div class="viral-banner" id="viralBanner">
+        Esta mensagem foi gerada para <strong id="viralNome"></strong>.<br>
+        Quer ter sua frase personalizada com seu nome?<br>
+        <span style="color:var(--gold-dim);font-weight:500;cursor:pointer" onclick="abrirPacotes()">Adquira seu pacote de biscoitos ✦</span>
+      </div>
+
+      <!-- BOTÃO BAIXAR CARD -->
+      <button class="download-btn" onclick="baixarCard()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Baixar card para compartilhar
+      </button>
+
+      <!-- SHARE BUTTONS -->
+      <div class="share-label">Ou compartilhe direto</div>
+      <div class="share-grid">
+        <button class="share-btn whatsapp" onclick="shareWA()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </button>
+        <button class="share-btn instagram" onclick="shareIG()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          Instagram
+        </button>
+        <button class="share-btn" onclick="shareX()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          X / Twitter
+        </button>
+        <button class="share-btn" id="copyBtn" onclick="copyMsg()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copiar texto
+        </button>
+      </div>
+
+      <button class="nova-btn" onclick="novaMensagem()">↻ Gerar nova mensagem</button>
+      <button class="nova-btn" style="color:var(--gold-dim);font-weight:500;" onclick="abrirPacotes()">🥠 Quero mais biscoitos personalizados</button>
+
+      <div class="cd-bar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="cdText">Calculando...</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section class="how-section" id="como-funciona">
+    <div class="section-eyebrow">✦ simples assim ✦</div>
+    <h2 class="section-title">Como funciona</h2>
+    <div class="steps">
+      <div class="step"><span class="step-icon">🥠</span><div class="step-title">Abra seu biscoito</div><p class="step-text">Todo dia um biscoito grátis te espera. Clique, quebre e receba sua mensagem do universo.</p></div>
+      <div class="step"><span class="step-icon">✨</span><div class="step-title">IA gera sua mensagem</div><p class="step-text">A inteligência artificial cria uma frase personalizada com seu nome, especialmente para o seu estado de espírito.</p></div>
+      <div class="step"><span class="step-icon">🖼️</span><div class="step-title">Baixe seu card</div><p class="step-text">Escolha um fundo lindo, baixe o card e compartilhe. Quem vê vai querer o seu também.</p></div>
+      <div class="step"><span class="step-icon">💌</span><div class="step-title">Espalhe amor</div><p class="step-text">Cada compartilhamento leva sua mensagem adiante — e 20% de cada pacote pago vai para uma causa social.</p></div>
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section class="testimonials" id="depoimentos">
+    <div class="section-eyebrow">✦ histórias reais ✦</div>
+    <h2 class="section-title">O que o universo<br>fez por eles</h2>
+    <div class="testi-grid">
+      <div class="testi-card"><div class="testi-stars">✦ ✦ ✦ ✦ ✦</div><p class="testi-text">"Recebi a mensagem exatamente no dia em que mais precisava. E ver meu nome no card me emocionou. Compartilhei com todo mundo."</p><div class="testi-author">Ana Paula S. — São Paulo, SP</div></div>
+      <div class="testi-card"><div class="testi-stars">✦ ✦ ✦ ✦ ✦</div><p class="testi-text">"Mando o card personalizado todo dia pra minha mãe. Ela fica esperando. É nosso ritual de amor diário."</p><div class="testi-author">Carlos M. — Belo Horizonte, MG</div></div>
+      <div class="testi-card"><div class="testi-stars">✦ ✦ ✦ ✦ ✦</div><p class="testi-text">"O card ficou tão bonito que postei no Instagram e recebi 47 comentários perguntando onde conseguir. Produto incrível."</p><div class="testi-author">Fernanda L. — Curitiba, PR</div></div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM CTA -->
+  <section class="instagram-cta">
+    <div class="ig-card">
+      <div class="ig-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
+      <h3 class="ig-title">Siga no Instagram</h3>
+      <p class="ig-text">A frase do dia, cards lindos, histórias de pessoas tocadas pelo biscoito e muito mais. Faça parte dessa comunidade.</p>
+      <a href="https://instagram.com/mensagemdouniverso" target="_blank" class="ig-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        @mensagemdouniverso
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-logo">✦ Mensagem do Universo</div>
+  <div class="footer-links">
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#depoimentos">Depoimentos</a>
+    <a href="mailto:oi@mensagemdouniverso.com.br">Contato</a>
+  </div>
+  <div class="footer-copy">© 2026 Mensagem do Universo. Feito com amor e IA.</div>
+</footer>
+
+<script>
+  let currentMsg = '';
+  let currentMood = 'geral';
+  let currentNome = '';
+  let currentEmail = '';
+  let isLoading = false;
+  let isPago = false;
+  let pacoteSelecionado = { id:'p2', valor:1290, nome:'Mensal (30 biscoitos)' };
+
+  const bgs = {
+    cosmos: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80',
+    forest: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80',
+    ocean: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&q=80',
+    mountain: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
+    desert: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80',
+    aurora: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80',
+  };
+
+  function setMood(el) {
+    document.querySelectorAll('.mood-pill').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    currentMood = el.dataset.mood;
+  }
+
+  function setBg(key, el) {
+    document.querySelectorAll('.bg-thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const bg = document.getElementById('shareCardBg');
+    bg.style.backgroundImage = `url('${bgs[key]}')`;
+  }
+
+  function handleCookieClick() {
+    if (isLoading) return;
+    document.getElementById('modalOverlay').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.add('hidden');
+  }
+
+  function confirmarCadastro() {
+    const nome = document.getElementById('inputNome').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    currentNome = nome || '';
+    currentEmail = email || '';
+    closeModal();
+    executarAbertura();
+  }
+
+  function abrirSemCadastro() {
+    currentNome = '';
+    currentEmail = '';
+    closeModal();
+    executarAbertura();
+  }
+
+  async function executarAbertura() {
+    if (isLoading) return;
+    isLoading = true;
+
+    const btn = document.getElementById('cookieBtn');
+    btn.classList.add('opening');
+    document.getElementById('sparkles').style.display = 'block';
+    document.getElementById('cookieHint').style.opacity = '0';
+    document.getElementById('moodSection').style.opacity = '0.3';
+    document.getElementById('moodSection').style.pointerEvents = 'none';
+
+    await new Promise(r => setTimeout(r, 700));
+
+    document.getElementById('cookieArea').style.display = 'none';
+    document.getElementById('moodSection').style.display = 'none';
+    document.getElementById('heroSub').style.display = 'none';
+
+    const res = document.getElementById('resultSection');
+    res.classList.add('show');
+
+    if (currentNome) {
+      document.getElementById('shareCardName').textContent = 'Gerada para ' + currentNome;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+    await gerarMensagem();
+  }
+
+  const FRASES = [
+    "O universo conspira a seu favor, mesmo quando tudo parece quieto. Confie no silêncio — ele também é resposta.",
+    "Você carrega mais força do que imagina. O que parece peso hoje será fundação amanhã.",
+    "Há uma luz em você que nenhuma escuridão consegue apagar. Ela apenas aguarda o momento certo para brilhar.",
+    "O caminho não precisa ser claro para ser verdadeiro. Dê o próximo passo — o chão aparece.",
+    "Tudo que você viveu até aqui foi preparo. O melhor ainda está sendo construído.",
+    "O universo não esquece de ninguém. Sua vez está chegando, com calma e com certeza.",
+    "Às vezes descansar é o ato mais corajoso. Permita-se parar — e renascer.",
+    "Você não está sozinho nessa jornada. Forças invisíveis caminham ao seu lado.",
+    "O que parece fim é apenas uma curva no caminho. Continue andando.",
+    "Seu coração sabe o que sua mente ainda tenta entender. Ouça-o.",
+    "A vida está te preparando para algo maior. O que você sente agora é parte do processo.",
+    "Cada escolha sua tem valor. Mesmo as imperfeitas te trouxeram até aqui.",
+    "O universo fala em detalhes pequenos. Preste atenção nas coincidências de hoje.",
+    "Você merece tudo que é bom — não como recompensa, mas como direito.",
+    "Há beleza no seu jeito único de existir. O mundo precisa de você como você é.",
+    "O que você planta em silêncio será colhido com alegria. Continue semeando.",
+    "Nenhuma fase difícil dura para sempre. A maré já está virando.",
+    "Você é mais do que seus erros. Você é tudo que aprendeu com eles.",
+    "A gratidão abre portas que o esforço sozinho não consegue. Comece pelo que já tem.",
+    "O universo está reorganizando as coisas a seu favor. Tenha paciência com o processo.",
+    "Sua sensibilidade não é fraqueza — é onde mora sua maior força.",
+    "Um novo ciclo está começando. Solte o que não cabe mais e abra espaço para o novo.",
+    "Você já superou coisas que achava impossíveis. Esse também vai passar.",
+    "A paz que você busca não está longe. Ela começa em uma respiração funda agora.",
+    "O universo te vê. Cada esforço seu é notado e recompensado no tempo certo.",
+    "Confie mais em você. Você tem mais respostas do que imagina.",
+    "O amor que você doa ao mundo volta para você de formas inesperadas.",
+    "Hoje é um bom dia para começar algo novo. A energia está a seu favor.",
+    "Você foi feito para dias de luz. Os dias nublados são apenas passagem.",
+    "Há sempre uma saída — mesmo quando ela ainda não está visível. Ela existe.",
+    "Sua história ainda está sendo escrita. O melhor capítulo pode ser o próximo.",
+    "O que você deseja profundamente não é coincidência. É chamado.",
+    "Você não precisa ter tudo resolvido para merecer paz. Você merece agora.",
+    "Cada amanhecer é um recomeço oferecido pelo universo. Aceite esse presente.",
+    "Há sempre mais possibilidades do que conseguimos enxergar. Abra o olhar.",
+    "O universo sabe o que está fazendo. Mesmo quando você não entende, ele entende.",
+    "Sua presença transforma os ambientes que você habita. Não subestime seu impacto.",
+    "O que parece demora é na verdade preparação. Tudo tem o tempo perfeito.",
+    "Você é exatamente onde precisa estar agora. Confie na sua posição.",
+    "A coragem não é ausência de medo — é seguir mesmo com ele. E você segue.",
+    "Algo lindo está a caminho. Mantenha o coração aberto para receber.",
+    "Você tem tudo que precisa para o próximo passo. Confie no que já é.",
+    "O universo é generoso com quem acredita. Acredite um pouco mais hoje.",
+    "Sua intuição é uma bússola precisa. Pare e ouça o que ela está dizendo.",
+    "As coisas mais bonitas da sua vida ainda estão por vir. Esse é apenas o começo.",
+    "Você não precisa ser perfeito para ser amado. Você já é amado como é.",
+    "O que você está atravessando está te tornando mais sábio e mais forte.",
+    "Há um propósito em cada experiência sua. A vida não desperdiça nada.",
+    "A mudança que você deseja começa em um pensamento, em uma escolha, agora.",
+    "O universo te convida a soltar o controle e confiar no fluxo da vida.",
+    "Você é mais resiliente do que acredita. Sua história prova isso.",
+    "Algo que você esperou por muito tempo está prestes a acontecer.",
+    "O bem que você faz no mundo tem peso e valor. Continue fazendo.",
+    "Você tem o direito de ocupar espaço. De existir plenamente. De brilhar.",
+    "As respostas que você busca estão mais próximas do que parecem.",
+    "O universo te presenteia hoje com uma clareza que você precisava.",
+    "Tudo que saiu da sua vida abriu espaço para algo melhor entrar.",
+    "Você está crescendo — mesmo quando a sensação é de estar parado.",
+    "Há pessoas ao seu redor que torcem pelo seu bem. Deixe-se ser amado.",
+    "O próximo passo não precisa ser grande. Pequenos passos constroem grandes jornadas.",
+    "A vida está conspirando para te surpreender de forma positiva. Fique atento.",
+    "Você tem uma luz que guia não só a você, mas a todos ao seu redor.",
+    "O que você carrega no coração com amor sempre encontra o caminho de volta.",
+    "Hoje o universo te lembra: você é suficiente. Exatamente como você é.",
+    "Sua capacidade de recomeçar é um dos seus maiores dons. Use-a sem medo.",
+    "O que parece desvio muitas vezes é o atalho que o universo preparou para você.",
+    "Você não precisa de permissão para ser feliz. A felicidade começa agora.",
+    "Cada dia você escolhe seguir em frente. Essa coragem silenciosa é admirável.",
+    "O universo está tecendo algo bonito com os fios da sua vida. Tenha fé no bordado.",
+    "Você é capaz de coisas que ainda nem imaginou. Descubra-se aos poucos.",
+    "A leveza que você busca começa quando você deixa ir o que já não é seu.",
+    "Hoje é um dia de possibilidades. O que você vai fazer com ele?",
+    "O universo te convida a confiar mais no processo e menos no prazo.",
+    "Sua energia muda o clima dos lugares que você frequenta. Isso é um dom.",
+    "Há sempre um motivo para continuar. Você vai encontrá-lo no momento certo.",
+    "O amor que existe em você é a força mais poderosa que você possui.",
+    "Você está sendo guiado, mesmo quando a sensação é de estar perdido.",
+    "O que parece incerteza é na verdade o universo abrindo novas rotas para você.",
+    "Você merece relações que nutrem, trabalho que inspira e dias que renovam.",
+    "O universo nunca fecha uma porta sem abrir algo melhor. Observe ao redor.",
+    "Você tem dentro de si tudo que precisa para atravessar esse momento.",
+    "A vida está sempre trabalhando a seu favor — às vezes de formas invisíveis.",
+    "Cada desafio que você enfrenta é prova de que o universo confia na sua força.",
+    "Hoje você pode começar de novo. Não é fraqueza — é sabedoria.",
+    "O que você semeia com intenção e amor sempre germina. Confie na semente.",
+    "Você foi colocado nesse exato momento com um propósito. Confie nisso.",
+    "A paz interior é o maior tesouro. E ela está ao seu alcance agora.",
+    "Seu jeito de estar no mundo importa mais do que você imagina.",
+    "O universo te lembra hoje: respire. Deixe a vida fluir por você.",
+    "Você não precisa carregar tudo sozinho. Peça ajuda. Aceite apoio.",
+    "Algo que parecia impossível está prestes a se tornar realidade para você.",
+    "A gratidão transforma o ordinário em extraordinário. Experimente hoje.",
+    "Você tem mais aliados visíveis e invisíveis do que imagina. Não está só.",
+    "O universo não desperdiça nenhuma experiência sua. Tudo tem uso e significado.",
+    "Sua jornada é única e linda exatamente por ser sua. Não a compare com nenhuma outra.",
+    "Há uma versão sua que ainda vai te surpreender. Ela está sendo moldada agora.",
+    "O que você escolhe pensar molda o que você vive. Pense com carinho de si mesmo.",
+    "Você é digno de tudo que é bom — sem precisar justificar ou conquistar esse direito.",
+    "O universo vê cada pequeno esforço seu. Nada passa despercebido.",
+    "Hoje algo muda sutilmente a seu favor. Fique atento ao que é diferente.",
+    "Você tem a capacidade de transformar dificuldade em aprendizado. Isso é ouro.",
+    "O caminho mais longo muitas vezes é o mais rico. Aproveite cada trecho.",
+    "Há uma alegria esperando por você além desse momento difícil. Ela é real.",
+    "O universo te convida a acreditar em você com a mesma intensidade que acredita nos outros.",
+    "Sua história tem valor. Sua voz tem peso. Você tem importância.",
+    "Cada momento de cuidado que você dedica a si mesmo é um presente ao universo.",
+    "O que você deseja com o coração limpo, o universo coloca em movimento.",
+    "Você é mais do que o papel que desempenha. Você é a essência por trás de tudo.",
+    "A vida está te mostrando o caminho em pequenos sinais. Abra os olhos.",
+    "Hoje o universo te diz: você está no caminho certo. Continue.",
+    "O que parece confusão é muitas vezes reorganização. A clareza vem.",
+    "Você tem o dom de recomeçar. Use esse dom sem culpa.",
+    "O universo celebra cada passo seu, por menor que pareça.",
+    "Há uma leveza esperando por você do outro lado desse peso. Já está chegando.",
+    "Você é o protagonista da sua história. Escreva-a com coragem e amor.",
+    "O que você planta hoje com fé será colhido com alegria em breve.",
+    "Você tem o poder de escolher um pensamento mais gentil agora. Escolha.",
+    "A vida sempre encontra um jeito de te surpreender positivamente. Espere pelo seu.",
+    "Você não precisa de tudo resolvido para se sentir bem. A paz é uma escolha de agora.",
+    "O universo está do seu lado — sempre esteve, sempre estará.",
+    "Sua sensibilidade ao mundo é um presente raro. Cuide dela com carinho.",
+    "O que você atravessa hoje está fortalecendo quem você será amanhã.",
+    "Há beleza em você que vai muito além do que os olhos podem ver.",
+    "O universo te convida a confiar mais, controlar menos e sentir muito mais.",
+    "Você é capaz de fazer coisas lindas com o que a vida lhe deu.",
+    "Cada dia é uma oportunidade de se aproximar mais da vida que você deseja.",
+    "O que parece falta é espaço sendo criado para a abundância que vem.",
+    "Você tem uma força tranquila que move montanhas sem fazer barulho.",
+    "O universo está reorganizando as peças do seu quebra-cabeça. O quadro está ficando mais bonito.",
+    "Você merece dias leves, relações verdadeiras e sonhos realizados.",
+    "O que você acredita sobre si mesmo molda tudo ao seu redor. Acredite bem.",
+    "Há um ritmo certo para as coisas. O seu está chegando no tempo perfeito.",
+    "O universo te presenteia hoje com um sinal de que está no caminho.",
+    "Sua presença no mundo faz diferença — mesmo quando você não percebe.",
+    "O que você está vivendo agora tem um propósito maior do que você pode ver.",
+    "Você tem tudo que precisa para dar o próximo passo. Confie e dê.",
+    "A vida é generosa com quem é generoso consigo mesmo. Cuide-se mais.",
+    "O universo te lembra: o amor é sempre a resposta. Comece por você.",
+    "Você carrega em si a capacidade de criar algo lindo. Isso é imenso.",
+    "Cada respiração é um presente. Cada dia é uma dádiva. Você está aqui.",
+    "O que parece obstáculo é na verdade um convite ao crescimento.",
+    "Você tem aliados que ainda não conhece. Eles estão vindo ao seu encontro.",
+    "O universo nunca abandona quem tem fé. E você tem — mesmo que não perceba.",
+    "Sua coragem de continuar, mesmo nos dias difíceis, é inspiradora.",
+    "O bem que você é já é suficiente. O que você faz é consequência disso.",
+    "Há um recomeço disponível para você a qualquer momento. Basta querer.",
+    "O universo está te preparando para receber algo maior. Expanda sua visão.",
+    "Você é amado de formas que às vezes não consegue ver. Mas o amor está lá.",
+    "O que parece silêncio do universo é na verdade escuta. Ele está te ouvindo.",
+    "Hoje você pode soltar algo que já não serve mais. E ficar mais leve.",
+    "O universo te convida a acreditar no que ainda não dá para ver. Essa é a fé.",
+    "Sua história de superação já inspirou pessoas sem que você soubesse.",
+    "O que você sente com profundidade é sinal de que está vivo de verdade. Isso é lindo.",
+    "Há uma versão de você que já está do outro lado desse desafio. Ela te aguarda.",
+    "O universo trabalha enquanto você descansa. Durma em paz esta noite.",
+    "Você tem o direito de mudar de ideia. De crescer. De ser diferente de ontem.",
+    "O que parece desvio muitas vezes é o universo te levando por um caminho mais bonito.",
+    "Você é mais forte do que a tempestade que está enfrentando. Sempre foi.",
+    "Há coisas lindas sendo construídas na sua vida agora, em silêncio e com amor.",
+    "O universo te lembra que você é suficiente — não quando alcançar, mas agora.",
+    "O que você carrega com amor sempre chega ao destino certo.",
+    "Você tem o poder de transformar a energia do seu dia com uma escolha pequena.",
+    "Há uma clareza vindo em sua direção. Abra o coração para recebê-la.",
+    "O universo celebra você hoje — exatamente como você é, exatamente onde está.",
+    "Sua intuição já sabe. Confie nela um pouco mais hoje.",
+    "O que parece lento está na velocidade perfeita para você.",
+    "Você tem em si uma fonte de amor que não se esgota. Acesse-a.",
+    "O universo conspira para que os encontros certos aconteçam no tempo certo.",
+    "Você merece ser tratado com gentileza — principalmente por você mesmo.",
+    "Há algo muito bom esperando por você além dessa curva. Já está quase lá.",
+    "O universo te convida a sorrir para o que ainda está por vir. Vale a pena.",
+    "Você é mais inteiro do que imagina. Suas partes se encaixam de formas que você ainda vai descobrir.",
+    "O que você deseja com genuinidade o universo já colocou em movimento.",
+    "Há uma energia nova disponível para você agora. Respire e a receba.",
+    "O universo te lembra: cada fim é semente de um começo extraordinário.",
+    "Você tem um propósito único nesse mundo. Ninguém pode cumpri-lo por você.",
+    "O que parece espera é na verdade preparação para algo maior.",
+    "Você é digno de amor abundante, alegria verdadeira e paz duradoura.",
+    "Há uma força em você que se revela justamente nos momentos mais difíceis.",
+    "O universo está organizando algo lindo para você. Tenha fé no processo.",
+    "Você não precisa entender tudo agora. A compreensão vem no tempo certo.",
+    "O que você semeia com persistência floresce com beleza. Continue.",
+    "Há uma paz disponível para você agora — mais perto do que parece.",
+    "O universo te convida a confiar no que não vê. O invisível também é real.",
+    "Você tem o dom de transformar dor em sabedoria. Isso é extraordinário.",
+    "O que parece incerto é espaço aberto para o melhor acontecer.",
+    "Você é exatamente quem precisa ser agora. Confie na sua versão atual.",
+    "Há uma oportunidade escondida nesse momento. Olhe com outros olhos.",
+    "O universo está do seu lado — especialmente quando você duvida disso.",
+    "Sua história de amor com a vida ainda está sendo escrita. E fica mais linda a cada página.",
+    "O que você escolhe valorizar determina o que a vida te devolve. Valorize o bom.",
+    "Você tem uma sensibilidade que capta o que outros não percebem. Esse é um dom.",
+    "Há uma luz no fim desse túnel. Ela está mais perto do que parece.",
+    "O universo te lembra: você não precisa correr. O seu tempo é sagrado.",
+    "Você é a razão de alegria de pessoas que às vezes esquecem de dizer.",
+    "O que parece complicado tem uma solução simples esperando ser encontrada.",
+    "Há um amanhã mais leve te esperando. Ele está sendo preparado agora.",
+    "O universo te convida a olhar para dentro — as respostas estão lá.",
+    "Você tem coragem suficiente para esse próximo passo. Pode ir.",
+    "O que você é já é uma contribuição para o mundo. Você não precisa provar nada.",
+    "Há uma alegria pequena e genuína disponível para você hoje. Encontre-a.",
+    "O universo age nos detalhes. Preste atenção nas pequenas graças do dia.",
+    "Você carrega em si uma história que merece ser celebrada.",
+    "O que parece peso vai se tornar leveza quando o tempo certo chegar.",
+    "Há uma beleza singular na sua jornada. Nenhuma outra é igual.",
+    "O universo te lembra: o que você sente é válido. Todos os seus sentimentos importam.",
+    "Você tem a capacidade de criar paz onde há agitação. Isso é raro.",
+    "O que você está buscando também está te buscando. O encontro está próximo.",
+    "Há uma renovação acontecendo em você agora, mesmo que invisível.",
+    "O universo te convida a ser gentil consigo mesmo hoje. Você merece.",
+    "Você tem mais clareza do que imagina. Ela se revela quando você para.",
+    "O que parece ausência é espaço sagrado sendo criado para o que vem.",
+    "Há um tipo de força que só nasce na quietude. Você a conhece.",
+    "O universo está tecendo conexões invisíveis que te surpreenderão em breve.",
+    "Você merece dias em que acordar seja um presente. Eles estão chegando.",
+    "O que você faz com amor deixa marcas que duram além do que você imagina.",
+    "Há uma harmonia sendo restaurada na sua vida. Sinta-a chegando.",
+    "O universo te lembra: cada amanhecer é uma prova de que a vida quer você aqui.",
+    "Você tem um coração generoso. Isso é um dos seus maiores tesouros.",
+    "O que parece fim é o universo fazendo espaço para algo melhor.",
+    "Há um encontro especial a caminho. O universo está preparando o terreno.",
+    "O universo te convida a confiar no que você sente — não apenas no que pensa.",
+    "Você tem a capacidade de mudar o rumo da sua história a qualquer momento.",
+    "O que você viveu com dor foi transformado em sabedoria dentro de você.",
+    "Há uma recompensa chegando silenciosamente para tudo que você investiu.",
+    "O universo não age por acaso. Você está exatamente onde deveria estar.",
+    "Você é mais do que as suas circunstâncias. Você é quem escolhe como respondê-las.",
+    "O que parece invisível para os outros é claramente visto pelo universo.",
+    "Há uma força renovada disponível para você hoje. Acesse-a.",
+    "O universo te lembra que você é um milagre em movimento. Acredite.",
+    "Você tem o poder de transformar esse dia com uma atitude, uma palavra, um sorriso.",
+    "O que você carrega com fé sempre chega ao destino certo.",
+    "Há uma paz profunda disponível para você — além do que a mente alcança.",
+    "O universo está organizando uma surpresa positiva para você. Mantenha o coração aberto.",
+    "Você é amado por quem você é, não pelo que faz. Lembre-se disso hoje.",
+    "O que parece desvio é muitas vezes o caminho mais bonito que o universo desenhou.",
+    "Há uma conquista sua que está sendo celebrada por forças que você não vê.",
+    "O universo te convida a acreditar que o melhor ainda está por vir. Porque está.",
+    "Você tem dentro de si uma sabedoria que vai além dos anos vividos.",
+    "O que você planta em amor floresce em abundância. Continue plantando.",
+    "Há uma versão mais leve e feliz de você sendo revelada a cada dia.",
+    "O universo te lembra: você não precisa de aprovação para ser quem você é.",
+    "Você é exatamente o que o mundo precisa — com todas as suas particularidades.",
+    "O que parece luta está te moldando para algo extraordinário.",
+    "Há uma resposta chegando para aquela pergunta que você carrega há tanto tempo.",
+    "O universo está trabalhando em silêncio para que tudo se encaixe perfeitamente.",
+    "Você merece toda a abundância que está chegando. Receba sem culpa.",
+    "O que você é capaz de criar com amor não tem limite. Confie na sua criatividade.",
+    "Há uma energia de renovação no ar hoje. Abra-se para ela.",
+    "O universo te convida a celebrar o que já conquistou antes de buscar o próximo.",
+    "Você tem uma resiliência que se fortalece a cada desafio enfrentado.",
+    "O que parece impossível é apenas o que ainda não foi tentado da forma certa.",
+    "Há uma oportunidade de cura disponível para você agora. Acolha-a.",
+    "O universo vê cada lágrima e cada esforço seu. Nada é esquecido.",
+    "Você carrega em si a capacidade de criar beleza em qualquer circunstância.",
+    "O que você deseja com pureza de intenção o universo já está preparando.",
+    "Há uma alegria crescendo silenciosamente dentro de você. Deixe-a florescer.",
+    "O universo te lembra: você não precisa ter tudo para ser grato. A gratidão é o começo.",
+    "Você tem uma capacidade única de ver o bem onde outros não conseguem.",
+    "O que parece espera é na verdade o universo organizando os detalhes perfeitos.",
+    "Há um novo horizonte se abrindo para você. Ele é mais lindo do que você imagina.",
+    "O universo te convida a confiar que tudo está sendo cuidado — inclusive você.",
+    "Você é portador de uma história que ainda vai inspirar muitas outras.",
+    "O que você atravessa com dignidade transforma não só você, mas todos ao redor.",
+    "Há uma leveza te esperando do outro lado dessa fase. Ela já está chegando.",
+    "O universo nunca coloca em seu caminho o que você não é capaz de atravessar.",
+    "Você tem um dom para transformar momentos simples em memórias preciosas.",
+    "O que parece estagnação é a vida te preparando para um salto extraordinário.",
+    "Há uma conexão especial a caminho que vai mudar algo lindo na sua vida.",
+    "O universo te lembra: você já é suficiente. E ainda vai crescer muito mais.",
+    "Você tem a coragem de um explorador e a sensibilidade de um poeta. Isso é raro.",
+    "O que você oferece ao mundo com generosidade volta a você multiplicado.",
+    "Há uma clareza sobre sua vida chegando que vai trazer muita paz.",
+    "O universo está abrindo uma janela nova para você. Olhe através dela.",
+    "Você merece um amor que te escolhe todos os dias. E ele existe para você.",
+    "O que parece fim de um ciclo é o início de algo muito mais alinhado com quem você é.",
+    "Há uma coragem em você que ainda não foi completamente descoberta. Ela te surpreenderá.",
+    "O universo te convida a confiar no seu próprio processo de crescimento.",
+    "Você tem o poder de escolher leveza mesmo nos dias pesados. Isso é liberdade.",
+    "O que você cultiva com constância, o universo recompensa com grandeza.",
+    "Há um presente escondido no que parece problema hoje. Procure com calma.",
+    "O universo vê o bem que há em você, mesmo quando você não consegue ver.",
+    "Você é um ser de luz — mesmo nos dias em que essa luz parece apagada.",
+    "O que parece desequilíbrio é o universo te convidando a encontrar um centro mais verdadeiro.",
+    "Há uma bênção chegando que você ainda não sabe que estava pedindo.",
+    "O universo te lembra: você não precisa ser forte o tempo todo. Descansar é também avançar.",
+    "Você tem uma capacidade incrível de encontrar o lado bom das situações. Use-a hoje.",
+    "O que você faz com dedicação silenciosa será reconhecido no momento exato.",
+    "Há um ciclo de abundância se abrindo para você. Esteja pronto para receber.",
+    "O universo não te esqueceu. Ele está cuidando de você de formas que ainda vai descobrir.",
+    "Você carrega em si a sabedoria de tudo que viveu. Isso é seu maior patrimônio.",
+    "O que parece incompleto está sendo finalizado nos bastidores. Confie.",
+    "Há uma paz que supera todo entendimento te esperando. Ela é real e está chegando.",
+    "O universo te convida a ver a vida com os olhos de quem espera o melhor.",
+    "Você tem uma energia que atrai o que é bom. Alimente essa energia hoje.",
+    "O que você compartilha com amor cria ondas que você nunca vai conseguir medir.",
+    "Há uma nova fase se aproximando, mais leve e mais alinhada com seus sonhos.",
+    "O universo está organizando um reencontro com uma versão mais plena de você.",
+    "Você tem o direito de crescer, mudar e se tornar quem você foi feito para ser.",
+    "O que parece distante está mais perto do que o tempo sugere. Acredite.",
+    "Há uma gentileza disponível para você hoje — comece oferecendo-a a si mesmo.",
+    "O universo te lembra: o amor que você carrega é sua maior proteção.",
+    "Você tem a capacidade de criar conexões verdadeiras onde vai. Isso é um dom.",
+    "O que você vive hoje está preparando terreno para uma colheita futura incrível.",
+    "Há uma música no silêncio da sua vida que só você consegue ouvir. Ouça.",
+    "O universo te convida a acreditar que você é exatamente quem o mundo precisa.",
+    "Você tem um potencial que ainda está sendo descoberto. Cada dia revela mais.",
+    "O que parece obstáculo é na verdade um convite a ser mais criativo e mais forte.",
+    "Há uma transformação profunda acontecendo em você. Ela está quase completa.",
+    "O universo vê sua jornada com admiração. Você é mais corajoso do que pensa.",
+    "Você tem o poder de tornar qualquer lugar mais humano com sua presença.",
+    "O que você escolhe agora ecoa no seu futuro de formas que ainda vai descobrir.",
+    "Há uma benção chegando que vai responder a algo que você carregou em silêncio.",
+    "O universo te lembra: tudo que é seu vai chegar até você. Não há como se perder.",
+    "Você é uma versão única de amor nesse mundo. E o mundo precisa disso.",
+    "O que parece fim de uma história é o prólogo de algo muito maior e mais bonito.",
+    "Há uma energia de cura disponível para você agora. Deixe-a entrar.",
+    "O universo está sempre trabalhando a seu favor, mesmo no silêncio.",
+    "Você tem a capacidade de encontrar significado onde outros veem apenas caos.",
+    "O que você carrega com fé e amor sempre encontra seu lugar no mundo.",
+    "Há uma versão de você que já está do outro lado desse desafio, sorrindo. Siga em direção a ela.",
+    "O universo te convida a celebrar o que você já é antes de buscar o que ainda quer ser.",
+    "Você tem uma riqueza interior que nenhuma circunstância consegue tirar de você.",
+    "O que parece lento está sendo construído com cuidado para durar para sempre.",
+    "Há uma surpresa boa esperando por você — ela está mais próxima do que imagina.",
+    "O universo não comete erros com você. Tudo tem um propósito, mesmo o que dói.",
+    "Você tem a habilidade de transformar momentos difíceis em lições de vida valiosas.",
+    "O que você deseja com clareza e intenção o universo já está preparando para você.",
+    "Há uma paz que vai além das circunstâncias disponível para você agora.",
+    "O universo te lembra: você é a resposta à oração de alguém que você nem conhece.",
+    "Você carrega em si o poder de mudar a vida de pessoas sem nem perceber.",
+    "O que parece complicado tem uma solução elegante esperando ser revelada.",
+    "Há uma fase de florescimento chegando depois desse inverno. Ela é real.",
+    "O universo te convida a confiar na sua capacidade de recomeçar sempre que precisar.",
+    "Você tem um coração que sente profundamente. Isso é onde mora a verdadeira força.",
+    "O que você planta com esperança floresce com beleza no tempo perfeito.",
+    "Há uma luz que só você pode levar para alguns lugares. Vá carregá-la.",
+    "O universo está preparando você para receber algo que vai além dos seus sonhos atuais.",
+    "Você tem o dom de trazer calma onde há agitação. Use esse dom hoje.",
+    "O que parece vazio é espaço sendo preparado para o que realmente importa.",
+    "Há um amor genuíno chegando em sua direção. Abra o coração para recebê-lo.",
+    "O universo te lembra: você não precisa merecer a graça. Ela é dada com generosidade.",
+    "Você tem uma capacidade única de se reinventar e isso é extraordinário.",
+    "O que você cultiva com amor deixa raízes que o tempo não apaga.",
+    "Há uma energia de renovação que está chegando para você hoje. Sinta-a.",
+    "O universo está do seu lado — agora, sempre e em qualquer circunstância.",
+    "Você carrega em si todas as ferramentas para construir a vida que sonha.",
+    "O que parece vazio está prestes a ser preenchido com algo muito especial.",
+    "Há uma conquista silenciosa sua que merece ser celebrada hoje.",
+    "O universo te convida a acreditar um pouco mais em você do que ontem.",
+    "Você tem uma sensibilidade que transforma o mundo ao seu redor. É um presente.",
+    "O que você faz com amor nunca é em vão — sempre há um efeito positivo.",
+    "Há uma harmonia voltando para sua vida. Ela está chegando devagar e com força.",
+    "O universo vê a beleza em você que às vezes você mesmo não consegue ver.",
+    "Você é capaz de coisas que ainda nem imaginou. Sua jornada ainda tem muito a revelar.",
+    "O que parece pesado vai se tornar leve no momento em que você decidir soltar.",
+    "Há uma oportunidade única esperando por você. Ela está chegando no tempo certo.",
+    "O universo te lembra: você é amado exatamente como é — sem condições.",
+    "Você tem o poder de criar alegria onde estiver. Use esse poder hoje.",
+    "O que você atravessa com coragem escreve os capítulos mais belos da sua história.",
+    "Há uma renovação profunda acontecendo em sua vida. Confie nesse processo.",
+    "O universo conspirou para que você existisse. Isso por si só é extraordinário.",
+    "Você tem tudo que precisa para que esse seja um dia especial. Comece acreditando.",
+    "O que parece o fim é sempre, em algum lugar, um começo. Confie nessa verdade.",
+    "O universo te vê, te guia e te ama. Você nunca esteve sozinho, e nunca estará."
+  ];
+
+  function getFraseDoDia() {
+    const hoje = new Date();
+    const inicio = new Date(hoje.getFullYear(), 0, 0);
+    const diff = hoje - inicio;
+    const umDia = 1000 * 60 * 60 * 24;
+    const diaDoAno = Math.floor(diff / umDia);
+    return FRASES[(diaDoAno - 1) % FRASES.length];
+  }
+
+  async function gerarMensagem() {
+    document.getElementById('shareCardQuote').innerHTML = '<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+    await new Promise(r => setTimeout(r, 800));
+
+    let frase = getFraseDoDia();
+
+    if (currentNome) {
+      const meio = Math.floor(frase.length / 2);
+      const pontoMeio = frase.indexOf('.', meio);
+      if (pontoMeio !== -1 && pontoMeio < frase.length - 1) {
+        frase = frase.slice(0, pontoMeio + 1) + ` ${currentNome}, ` + frase.slice(pontoMeio + 2).trim();
+      }
+    }
+
+    currentMsg = frase;
+    document.getElementById('shareCardQuote').textContent = currentMsg;
+    isLoading = false;
+  }
+
+  async function novaMensagem() {
+    if (isLoading) return;
+    isLoading = true;
+    await gerarMensagem();
+  }
+
+  function abrirPacotes() {
+    document.getElementById('pacotesOverlay').classList.remove('hidden');
+  }
+
+  function fecharPacotes() {
+    document.getElementById('pacotesOverlay').classList.add('hidden');
+  }
+
+  function selecionarPacote(id, valor, nome) {
+    document.querySelectorAll('.pacote-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById(id).classList.add('selected');
+    pacoteSelecionado = { id, valor, nome };
+    document.getElementById('pixValor').textContent = 'R$ ' + (valor/100).toFixed(2).replace('.',',');
+  }
+
+  function pagarPix() {
+    alert(`Integração Pix em breve!\n\nPacote: ${pacoteSelecionado.nome}\nValor: R$ ${(pacoteSelecionado.valor/100).toFixed(2)}\n\nNo site real, aqui abre o QR Code do Mercado Pago.`);
+    fecharPacotes();
+    isPago = true;
+    if (currentNome) {
+      document.getElementById('viralBanner').classList.remove('show');
+    }
+  }
+
+  function getShareText() {
+    const nome = currentNome ? `\n\nGerada para ${currentNome}` : '';
+    return `✦ Mensagem do Universo de hoje ✦\n\n"${currentMsg}"${nome}\n\nPegue a sua em mensagemdouniverso.com.br`;
+  }
+
+  function shareWA() { window.open('https://wa.me/?text=' + encodeURIComponent(getShareText()), '_blank'); }
+  function shareIG() { navigator.clipboard.writeText(getShareText()).then(() => alert('Texto copiado! Cole na legenda do seu story ou post.')); }
+  function shareX() { window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(getShareText()), '_blank'); }
+
+  function copyMsg() {
+    navigator.clipboard.writeText(getShareText()).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg> Copiado!';
+      setTimeout(() => { btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar texto'; }, 2500);
+    });
+  }
+
+  async function baixarCard() {
+    const card = document.getElementById('shareCard');
+    try {
+      const canvas = await html2canvas(card, { useCORS: true, scale: 2, backgroundColor: null });
+      const link = document.createElement('a');
+      link.download = 'mensagem-do-universo.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch(e) {
+      alert('Não foi possível gerar a imagem. Tente fazer uma captura de tela do card.');
+    }
+  }
+
+  function updateCountdown() {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const diff = tomorrow - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    document.getElementById('cdText').textContent = `Próxima mensagem em ${h}h ${m}min`;
+  }
+</script>
+</body>
+</html>
