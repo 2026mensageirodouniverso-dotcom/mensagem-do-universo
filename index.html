@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -17,15 +17,15 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --gold: #B8860B;
-      --gold-light: #D4A017;
-      --gold-pale: #FDF3DC;
+      --gold: #A07800;
+      --gold-light: #C49A00;
+      --gold-pale: #FDF0C8;
       --gold-dim: #6B4F00;
-      --ink: #1A1208;
-      --ink-mid: #2C2218;
-      --ink-soft: #4A3F2F;
+      --ink: #100C04;
+      --ink-mid: #1E1810;
+      --ink-soft: #3A3020;
       --parchment: #FBF7F0;
-      --parchment-dark: #F0E8D8;
+      --parchment-dark: #EEE4D0;
       --white: #FFFFFF;
       --serif: 'Cormorant Garamond', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
@@ -237,20 +237,20 @@
     @keyframes dot-pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
 
     /* SECTIONS */
-    .how-section { position: relative; z-index: 10; padding: 5rem 1.5rem; background: var(--white); border-top: 0.5px solid rgba(201,168,76,0.15); border-bottom: 0.5px solid rgba(201,168,76,0.15); text-align: center; }
-    .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.75rem; }
-    .section-title { font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 300; color: var(--ink); margin-bottom: 3rem; line-height: 1.3; }
+    .how-section { position: relative; z-index: 10; padding: 5rem 1.5rem; background: var(--white); border-top: 2px solid rgba(160,120,0,0.2); border-bottom: 2px solid rgba(160,120,0,0.2); text-align: center; }
+    .section-eyebrow { font-size: 0.9rem; letter-spacing: 0.2em; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 700; }
+    .section-title { font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 400; color: var(--ink); margin-bottom: 3rem; line-height: 1.3; }
     .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 2rem; max-width: 800px; margin: 3rem auto 0; }
     .step { text-align: center; }
-    .step-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
-    .step-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; color: var(--ink); margin-bottom: 0.5rem; }
-    .step-text { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.65; }
-    .testimonials { position: relative; z-index: 10; padding: 5rem 1.5rem; text-align: center; border-top: 0.5px solid rgba(201,168,76,0.15); }
+    .step-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .step-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 500; color: var(--ink); margin-bottom: 0.5rem; }
+    .step-text { font-size: 1rem; color: var(--ink-soft); line-height: 1.7; font-weight: 400; }
+    .testimonials { position: relative; z-index: 10; padding: 5rem 1.5rem; text-align: center; border-top: 2px solid rgba(160,120,0,0.15); }
     .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1.25rem; max-width: 900px; margin: 0 auto; }
-    .testi-card { background: var(--white); border: 0.5px solid rgba(201,168,76,0.2); border-radius: 14px; padding: 1.75rem 1.5rem; text-align: left; }
-    .testi-stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 0.875rem; }
-    .testi-text { font-family: var(--serif); font-size: 1rem; font-weight: 300; line-height: 1.7; color: var(--ink-mid); margin-bottom: 1rem; font-style: italic; }
-    .testi-author { font-size: 0.75rem; color: var(--ink-soft); }
+    .testi-card { background: var(--white); border: 1.5px solid rgba(160,120,0,0.25); border-radius: 14px; padding: 1.75rem 1.5rem; text-align: left; }
+    .testi-stars { color: var(--gold); font-size: 0.9rem; letter-spacing: 0.1em; margin-bottom: 0.875rem; }
+    .testi-text { font-family: var(--serif); font-size: 1.1rem; font-weight: 300; line-height: 1.7; color: var(--ink-mid); margin-bottom: 1rem; font-style: italic; }
+    .testi-author { font-size: 0.9rem; color: var(--ink-soft); font-weight: 500; }
     .instagram-cta { position: relative; z-index: 10; padding: 5rem 1.5rem; text-align: center; }
     .ig-card { max-width: 500px; margin: 0 auto; background: var(--white); border: 0.5px solid rgba(201,168,76,0.25); border-radius: 20px; padding: 3rem 2rem; }
     .ig-icon { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
@@ -617,7 +617,7 @@
     res.classList.add('show');
 
     if (currentNome) {
-      document.getElementById('shareCardName').textContent = 'Gerada para ' + currentNome;
+      document.getElementById('shareCardName').textContent = currentNome;
     }
 
     updateCountdown();
@@ -1053,7 +1053,7 @@
   }
 
   function getShareText() {
-    const nome = currentNome ? `\n\nGerada para ${currentNome}` : '';
+    const nome = currentNome ? `\n\n✦ ${currentNome}` : '';
     return `✦ Mensagem do Universo de hoje ✦\n\n"${currentMsg}"${nome}\n\nPegue a sua em mensagemdouniverso.com.br`;
   }
 
