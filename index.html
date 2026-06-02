@@ -1142,12 +1142,15 @@
           ${currentNome ? `${currentNome}, seus` : 'Seus'} <strong>${pix.biscoitos} biscoitos</strong> foram creditados com sucesso. 
         </p>
         <p style="font-size:0.9rem;color:#6B4F00;margin-bottom:1.5rem;">O universo tem muito pra te dizer. 💛</p>
-        <button onclick="this.closest('[style]').remove()" style="width:100%;padding:13px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:1rem;font-weight:500;cursor:pointer;">
+        <button onclick="document.getElementById('pixConfirmacao').remove()" style="width:100%;padding:13px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:1rem;font-weight:500;cursor:pointer;margin-bottom:0.5rem;">
           ✦ Abrir meu biscoito
+        </button>
+        <button onclick="document.getElementById('pixConfirmacao').remove()" style="width:100%;padding:10px;background:none;border:1.5px solid rgba(160,120,0,0.3);border-radius:10px;font-size:0.9rem;color:#6B4F00;font-weight:500;cursor:pointer;">
+          Fechar
         </button>
       </div>
     `;
-    document.body.appendChild(conf);
+    conf.id = 'pixConfirmacao';
   }
 
   function copiarPix(payload) {
