@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -543,6 +544,11 @@
 </footer>
 
 <script>
+  // SUPABASE
+  const SUPABASE_URL = 'https://ynopmcyrwptnwowoyoqk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_7bUBNkCVyFPbul5pOKa-jA_v_Kp-gIN';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
   let currentMsg = '';
   let currentMood = 'geral';
   let currentNome = '';
@@ -582,12 +588,13 @@
     document.getElementById('modalOverlay').classList.add('hidden');
   }
 
-  function confirmarCadastro() {
+  async function confirmarCadastro() {
     const nome = document.getElementById('inputNome').value.trim();
     const email = document.getElementById('inputEmail').value.trim();
     currentNome = nome || '';
     currentEmail = email || '';
     closeModal();
+    if (currentEmail) await buscarOuCriarUsuario(currentEmail, currentNome);
     executarAbertura();
   }
 
@@ -1046,52 +1053,106 @@
   }
 
   const PIX_PAYLOADS = {
-    p1: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com52040000530398654044.905802BR5917Mensagem Universo6012Porto Alegre62140510BISCOITO106304351D', valor: 'R$ 4,90', nome: 'Starter (10 biscoitos)' },
-    p2: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540512.905802BR5917Mensagem Universo6012Porto Alegre62140510BISCOITO306304CCFB', valor: 'R$ 12,90', nome: 'Mensal (30 biscoitos)' },
-    p3: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540534.905802BR5917Mensagem Universo6012Porto Alegre62150511BISCOITO1006304A187', valor: 'R$ 34,90', nome: 'Família (100 biscoitos)' }
+    p1: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com52040000530398654044.905802BR5917Mensagem Universo6012Porto Alegre62140510BISCOITO106304351D', valor: 'R$ 4,90', nome: 'Starter (10 biscoitos)', biscoitos: 10 },
+    p2: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540512.905802BR5917Mensagem Universo6012Porto Alegre62140510BISCOITO306304CCFB', valor: 'R$ 12,90', nome: 'Mensal (30 biscoitos)', biscoitos: 30 },
+    p3: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540534.905802BR5917Mensagem Universo6012Porto Alegre62150511BISCOITO1006304A187', valor: 'R$ 34,90', nome: 'Família (100 biscoitos)', biscoitos: 100 }
   };
+
+  async function buscarOuCriarUsuario(email, nome) {
+    if (!email) return null;
+    try {
+      const { data } = await sb.from('usuarios').select('*').eq('email', email).single();
+      if (data) return data;
+      const { data: novo } = await sb.from('usuarios').insert([{ email, nome, biscoitos: 1, total_pago: 0 }]).select().single();
+      return novo;
+    } catch { return null; }
+  }
+
+  async function adicionarBiscoitos(email, quantidade, valorPago) {
+    if (!email) return;
+    try {
+      const { data } = await sb.from('usuarios').select('biscoitos, total_pago').eq('email', email).single();
+      if (data) {
+        await sb.from('usuarios').update({
+          biscoitos: (data.biscoitos || 0) + quantidade,
+          total_pago: (data.total_pago || 0) + valorPago
+        }).eq('email', email);
+      } else {
+        await sb.from('usuarios').insert([{ email, nome: currentNome, biscoitos: quantidade, total_pago: valorPago }]);
+      }
+    } catch(e) { console.error('Erro Supabase:', e); }
+  }
 
   async function pagarPix() {
     const pix = PIX_PAYLOADS[pacoteSelecionado.id];
     fecharPacotes();
 
-    // Cria modal do QR Code
     const overlay = document.createElement('div');
+    overlay.id = 'pixModal';
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
     overlay.innerHTML = `
       <div style="background:#fff;border-radius:20px;padding:2rem;max-width:380px;width:100%;text-align:center;position:relative;">
-        <button onclick="this.closest('[style]').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#4A3F2F;">✕</button>
-        <div style="font-size:1.8rem;margin-bottom:0.5rem;">🥠</div>
-        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:0.25rem;">Pagar com Pix</h3>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:0.25rem;">🥠 Pagar com Pix</h3>
         <p style="font-size:0.9rem;color:#3A3020;margin-bottom:1rem;">${pix.nome} — <strong>${pix.valor}</strong></p>
         <div id="qrcode-container" style="margin:0 auto 1rem;width:200px;height:200px;"></div>
         <p style="font-size:0.85rem;color:#3A3020;margin-bottom:0.75rem;">Escaneie o QR Code com o app do seu banco</p>
-        <button onclick="copiarPix('${pix.payload}')" style="width:100%;padding:12px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:0.5rem;">
+        <button onclick="copiarPix('${pix.payload}')" style="width:100%;padding:12px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:0.75rem;">
           📋 Copiar código Pix
         </button>
-        <p style="font-size:0.75rem;color:#6B4F00;">Após o pagamento, envie o comprovante para<br><strong>2026mensageirodouniverso@gmail.com</strong></p>
+        <button onclick="confirmarPagamento()" style="width:100%;padding:12px;background:#2d7a4f;color:#fff;border:none;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:0.75rem;">
+          ✅ Já paguei!
+        </button>
+        <p style="font-size:0.72rem;color:#6B4F00;">Dúvidas? Envie o comprovante para<br><strong>2026mensageirodouniverso@gmail.com</strong></p>
       </div>
     `;
     document.body.appendChild(overlay);
 
-    // Gera QR Code
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
     script.onload = () => {
       new QRCode(document.getElementById('qrcode-container'), {
-        text: pix.payload,
-        width: 200,
-        height: 200,
-        colorDark: '#1A1208',
-        colorLight: '#ffffff'
+        text: pix.payload, width: 200, height: 200,
+        colorDark: '#1A1208', colorLight: '#ffffff'
       });
     };
     document.head.appendChild(script);
   }
 
+  async function confirmarPagamento() {
+    const pix = PIX_PAYLOADS[pacoteSelecionado.id];
+    const modal = document.getElementById('pixModal');
+
+    // Registra no Supabase
+    if (currentEmail) {
+      await adicionarBiscoitos(currentEmail, pix.biscoitos, parseFloat(pix.valor.replace('R$ ','').replace(',','.')));
+    }
+
+    // Fecha modal
+    if (modal) modal.remove();
+    isPago = true;
+
+    // Mostra confirmação
+    const conf = document.createElement('div');
+    conf.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+    conf.innerHTML = `
+      <div style="background:#fff;border-radius:20px;padding:2.5rem 2rem;max-width:380px;width:100%;text-align:center;">
+        <div style="font-size:3rem;margin-bottom:1rem;">🥠✨</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;color:#1A1208;margin-bottom:0.75rem;">Pagamento confirmado!</h3>
+        <p style="font-size:1rem;color:#3A3020;line-height:1.6;margin-bottom:0.75rem;">
+          ${currentNome ? `${currentNome}, seus` : 'Seus'} <strong>${pix.biscoitos} biscoitos</strong> foram creditados com sucesso. 
+        </p>
+        <p style="font-size:0.9rem;color:#6B4F00;margin-bottom:1.5rem;">O universo tem muito pra te dizer. 💛</p>
+        <button onclick="this.closest('[style]').remove()" style="width:100%;padding:13px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:1rem;font-weight:500;cursor:pointer;">
+          ✦ Abrir meu biscoito
+        </button>
+      </div>
+    `;
+    document.body.appendChild(conf);
+  }
+
   function copiarPix(payload) {
     navigator.clipboard.writeText(payload).then(() => {
-      alert('✅ Código Pix copiado!\n\nCole no app do seu banco para pagar.');
+      alert('✅ Código Pix copiado!\n\nCole no app do seu banco para pagar.\n\nDepois clique em "Já paguei!" para liberar seus biscoitos.');
     });
   }
 
