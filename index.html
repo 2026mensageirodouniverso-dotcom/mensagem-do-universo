@@ -481,6 +481,7 @@
       </div>
 
       <button class="nova-btn" onclick="novaMensagem()">↻ Gerar nova mensagem</button>
+      <div id="saldoBiscoitos" style="font-size:0.82rem;color:var(--gold-dim);font-weight:600;text-align:center;margin-top:4px;display:none;"></div>
       <button class="nova-btn" style="color:var(--gold-dim);font-weight:500;" onclick="abrirPacotes()">🥠 Quero mais biscoitos personalizados</button>
 
       <div class="cd-bar">
@@ -631,6 +632,14 @@
 
     updateCountdown();
     setInterval(updateCountdown, 60000);
+
+    // Mostra saldo se usuário logado
+    if (currentEmail) {
+      const saldoEl = document.getElementById('saldoBiscoitos');
+      if (saldoEl) saldoEl.style.display = 'block';
+      await carregarSaldo();
+    }
+
     await gerarMensagem();
   }
 
@@ -1033,8 +1042,42 @@
 
   async function novaMensagem() {
     if (isLoading) return;
+
+    if (currentEmail) {
+      // Verifica saldo no Supabase
+      const { data } = await sb.from('usuarios').select('biscoitos').eq('email', currentEmail).single();
+      const saldo = data ? data.biscoitos : 0;
+
+      if (saldo <= 0) {
+        // Sem biscoitos — abre modal de pacotes
+        const abrir = confirm('Você não tem mais biscoitos disponíveis.\n\nQuer adquirir um pacote para continuar recebendo mensagens do universo?');
+        if (abrir) abrirPacotes();
+        return;
+      }
+
+      // Debita 1 biscoito
+      await sb.from('usuarios').update({ biscoitos: saldo - 1 }).eq('email', currentEmail);
+      atualizarSaldoDisplay(saldo - 1);
+    }
+
     isLoading = true;
     await gerarMensagem();
+  }
+
+  function atualizarSaldoDisplay(saldo) {
+    const cdBar = document.getElementById('cdText');
+    if (cdBar && currentEmail) {
+      const countdown = cdBar.textContent;
+      // Mantém o countdown mas adiciona saldo
+      const saldoEl = document.getElementById('saldoBiscoitos');
+      if (saldoEl) saldoEl.textContent = `🥠 ${saldo} biscoito${saldo !== 1 ? 's' : ''} disponíve${saldo !== 1 ? 'is' : 'l'}`;
+    }
+  }
+
+  async function carregarSaldo() {
+    if (!currentEmail) return;
+    const { data } = await sb.from('usuarios').select('biscoitos').eq('email', currentEmail).single();
+    if (data) atualizarSaldoDisplay(data.biscoitos);
   }
 
   function abrirPacotes() {
@@ -1139,6 +1182,7 @@
     pagamentoConfirmado = true;
     if (modal) modal.remove();
     isPago = true;
+    await carregarSaldo(); // Atualiza display do saldo
 
     const conf = document.createElement('div');
     conf.id = 'pixConfirmacao';
