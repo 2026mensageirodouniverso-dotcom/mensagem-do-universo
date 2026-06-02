@@ -85,7 +85,7 @@
     .mood-section { margin-bottom: 1.75rem; }
     .mood-label { font-size: 0.9rem; color: var(--ink-mid); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 600; }
     .mood-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .mood-pill { font-family: var(--sans); font-size: 0.95rem; padding: 8px 20px; border-radius: 99px; border: 1.5px solid rgba(184,134,11,0.4); background: transparent; color: var(--ink-mid); cursor: pointer; transition: all 0.2s; font-weight: 500; }
+    .mood-pill { font-family: var(--sans); font-size: 0.95rem; padding: 8px 20px; border-radius: 99px; border: 1.5px solid rgba(100,75,0,0.4); background: transparent; color: var(--ink); cursor: pointer; transition: all 0.2s; font-weight: 500; }
     .mood-pill:hover, .mood-pill.active { border-color: var(--gold); color: var(--gold-dim); background: var(--gold-pale); font-weight: 600; }
 
     /* COOKIE */
@@ -266,8 +266,10 @@
     .footer-copy { font-size: 0.72rem; color: var(--ink-soft); opacity: 0.6; }
 
     @media (max-width: 600px) {
-      header { padding: 1rem 1.25rem; }
+      header { padding: 0.75rem 1rem; }
+      .logo { font-size: 0.95rem; white-space: nowrap; }
       nav a:not(.nav-instagram) { display: none; }
+      .nav-instagram { font-size: 0.72rem !important; padding: 5px 10px; }
       .hero { padding: 3rem 1.25rem 2rem; }
       footer { flex-direction: column; align-items: flex-start; }
       .pacotes-grid { grid-template-columns: 1fr; }
