@@ -1099,7 +1099,7 @@
         <button onclick="copiarPix('${pix.payload}')" style="width:100%;padding:12px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:0.75rem;">
           📋 Copiar código Pix
         </button>
-        <button onclick="confirmarPagamento()" style="width:100%;padding:12px;background:#2d7a4f;color:#fff;border:none;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:0.75rem;">
+        <button id="btnJaPaguei" onclick="confirmarPagamento()" style="width:100%;padding:12px;background:#2d7a4f;color:#fff;border:none;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:0.75rem;">
           ✅ Já paguei!
         </button>
         <p style="font-size:0.72rem;color:#6B4F00;">Dúvidas? Envie o comprovante para<br><strong>2026mensageirodouniverso@gmail.com</strong></p>
@@ -1118,28 +1118,37 @@
     document.head.appendChild(script);
   }
 
+  let pagamentoConfirmado = false;
+
   async function confirmarPagamento() {
+    if (pagamentoConfirmado) {
+      alert('Você já confirmou este pagamento! Seus biscoitos já foram creditados.');
+      return;
+    }
+
+    const btn = document.getElementById('btnJaPaguei');
+    if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Processando...'; btn.style.opacity = '0.6'; }
+
     const pix = PIX_PAYLOADS[pacoteSelecionado.id];
     const modal = document.getElementById('pixModal');
 
-    // Registra no Supabase
     if (currentEmail) {
       await adicionarBiscoitos(currentEmail, pix.biscoitos, parseFloat(pix.valor.replace('R$ ','').replace(',','.')));
     }
 
-    // Fecha modal
+    pagamentoConfirmado = true;
     if (modal) modal.remove();
     isPago = true;
 
-    // Mostra confirmação
     const conf = document.createElement('div');
+    conf.id = 'pixConfirmacao';
     conf.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
     conf.innerHTML = `
       <div style="background:#fff;border-radius:20px;padding:2.5rem 2rem;max-width:380px;width:100%;text-align:center;">
         <div style="font-size:3rem;margin-bottom:1rem;">🥠✨</div>
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;color:#1A1208;margin-bottom:0.75rem;">Pagamento confirmado!</h3>
         <p style="font-size:1rem;color:#3A3020;line-height:1.6;margin-bottom:0.75rem;">
-          ${currentNome ? `${currentNome}, seus` : 'Seus'} <strong>${pix.biscoitos} biscoitos</strong> foram creditados com sucesso. 
+          ${currentNome ? `${currentNome}, seus` : 'Seus'} <strong>${pix.biscoitos} biscoitos</strong> foram creditados com sucesso.
         </p>
         <p style="font-size:0.9rem;color:#6B4F00;margin-bottom:1.5rem;">O universo tem muito pra te dizer. 💛</p>
         <button onclick="document.getElementById('pixConfirmacao').remove()" style="width:100%;padding:13px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:1rem;font-weight:500;cursor:pointer;margin-bottom:0.5rem;">
@@ -1150,7 +1159,7 @@
         </button>
       </div>
     `;
-    conf.id = 'pixConfirmacao';
+    document.body.appendChild(conf);
   }
 
   function copiarPix(payload) {
