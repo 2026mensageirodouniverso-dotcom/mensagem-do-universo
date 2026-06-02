@@ -1045,44 +1045,54 @@
     document.getElementById('pixValor').textContent = 'R$ ' + (valor/100).toFixed(2).replace('.',',');
   }
 
+  const PIX_PAYLOADS = {
+    p1: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com52040000530398654044.905802BR5917Mensagem Universo6012Porto Alegre62140510BISCOITO106304351D', valor: 'R$ 4,90', nome: 'Starter (10 biscoitos)' },
+    p2: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540512.905802BR5917Mensagem Universo6012Porto Alegre62140510BISCOITO306304CCFB', valor: 'R$ 12,90', nome: 'Mensal (30 biscoitos)' },
+    p3: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540534.905802BR5917Mensagem Universo6012Porto Alegre62150511BISCOITO1006304A187', valor: 'R$ 34,90', nome: 'Família (100 biscoitos)' }
+  };
+
   async function pagarPix() {
-    const btn = document.querySelector('.pix-btn');
-    btn.innerHTML = '⏳ Gerando Pix...';
-    btn.disabled = true;
+    const pix = PIX_PAYLOADS[pacoteSelecionado.id];
+    fecharPacotes();
 
-    const pacoteMap = { p1: 'starter', p2: 'mensal', p3: 'familia' };
-    const pacoteKey = pacoteMap[pacoteSelecionado.id];
+    // Cria modal do QR Code
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:20px;padding:2rem;max-width:380px;width:100%;text-align:center;position:relative;">
+        <button onclick="this.closest('[style]').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#4A3F2F;">✕</button>
+        <div style="font-size:1.8rem;margin-bottom:0.5rem;">🥠</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:0.25rem;">Pagar com Pix</h3>
+        <p style="font-size:0.9rem;color:#3A3020;margin-bottom:1rem;">${pix.nome} — <strong>${pix.valor}</strong></p>
+        <div id="qrcode-container" style="margin:0 auto 1rem;width:200px;height:200px;"></div>
+        <p style="font-size:0.85rem;color:#3A3020;margin-bottom:0.75rem;">Escaneie o QR Code com o app do seu banco</p>
+        <button onclick="copiarPix('${pix.payload}')" style="width:100%;padding:12px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:0.5rem;">
+          📋 Copiar código Pix
+        </button>
+        <p style="font-size:0.75rem;color:#6B4F00;">Após o pagamento, envie o comprovante para<br><strong>2026mensageirodouniverso@gmail.com</strong></p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
 
-    try {
-      const response = await fetch('/.netlify/functions/pix', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pacote: pacoteKey,
-          email: currentEmail || ''
-        })
+    // Gera QR Code
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+    script.onload = () => {
+      new QRCode(document.getElementById('qrcode-container'), {
+        text: pix.payload,
+        width: 200,
+        height: 200,
+        colorDark: '#1A1208',
+        colorLight: '#ffffff'
       });
+    };
+    document.head.appendChild(script);
+  }
 
-      const data = await response.json();
-
-      if (data.error) throw new Error(data.error);
-
-      // Abre a página de pagamento do PagBank
-      window.open(data.urlPagamento, '_blank');
-
-      fecharPacotes();
-      isPago = true;
-
-      // Mostra mensagem de confirmação
-      alert(`✦ Quase lá!\n\nVocê será redirecionado para o PagBank para concluir o pagamento via Pix.\n\nApós confirmar o pagamento, seus biscoitos serão liberados automaticamente.`);
-
-    } catch (err) {
-      alert('Erro ao gerar o Pix. Por favor, tente novamente.');
-      console.error(err);
-    } finally {
-      btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M11.9 1c-.8 0-1.6.3-2.1.9L4.4 7.2c-.2.2-.4.3-.7.3H2.5C1.7 7.5 1 8.2 1 9v6c0 .8.7 1.5 1.5 1.5h1.2c.3 0 .5.1.7.3l5.4 5.3c.6.6 1.3.9 2.1.9s1.6-.3 2.1-.9l5.4-5.3c.2-.2.4-.3.7-.3h1.2c.8 0 1.5-.7 1.5-1.5V9c0-.8-.7-1.5-1.5-1.5h-1.2c-.3 0-.5-.1-.7-.3L14 1.9C13.5 1.3 12.7 1 11.9 1z"/></svg> Pagar com Pix — <span id="pixValor">R$ ${(pacoteSelecionado.valor/100).toFixed(2).replace('.',',')}</span>`;
-      btn.disabled = false;
-    }
+  function copiarPix(payload) {
+    navigator.clipboard.writeText(payload).then(() => {
+      alert('✅ Código Pix copiado!\n\nCole no app do seu banco para pagar.');
+    });
   }
 
   function getShareText() {
