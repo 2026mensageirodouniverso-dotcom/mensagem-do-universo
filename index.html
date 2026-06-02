@@ -633,7 +633,8 @@
     updateCountdown();
     setInterval(updateCountdown, 60000);
 
-    // Mostra saldo se usuário logado
+    // Carrega frases já vistas e saldo
+    await carregarFrasesUsadas();
     if (currentEmail) {
       const saldoEl = document.getElementById('saldoBiscoitos');
       if (saldoEl) saldoEl.style.display = 'block';
@@ -1011,22 +1012,333 @@
     "O universo te vê, te guia e te ama. Você nunca esteve sozinho, e nunca estará."
   ];
 
-  function getFraseDoDia() {
-    const hoje = new Date();
-    const inicio = new Date(hoje.getFullYear(), 0, 0);
-    const diff = hoje - inicio;
-    const umDia = 1000 * 60 * 60 * 24;
-    const diaDoAno = Math.floor(diff / umDia);
-    return FRASES[(diaDoAno - 1) % FRASES.length];
+  // FRASES PAGAS — profundas e oraculares por tema
+  const FRASES_PAGAS = {
+    amor: [
+      "Aquela pessoa que não sai da sua cabeça? O universo não coloca alguém assim no seu pensamento por acidente. Preste atenção.",
+      "Você não precisa diminuir quem você é para caber no coração de alguém. O amor certo te expande — nunca te encolhe.",
+      "Há um amor chegando que vai te fazer entender por que todos os outros não funcionaram. Tenha paciência com o processo.",
+      "Aquela relação que dói mais do que alegra? O universo está te dizendo algo que você já sabe, mas ainda tem medo de ouvir.",
+      "Você merece um amor que te escolhe todos os dias — não apenas quando é conveniente. Não aceite menos do que isso.",
+      "A solidão que você sente agora não é punição. É preparação. O amor que vem precisa te encontrar inteiro.",
+      "Aquela conversa que você tem evitado? O universo diz: é hora. O silêncio já durou o suficiente.",
+      "Você já amou com tanto medo de perder que esqueceu de aproveitar. O próximo amor, viva com as mãos abertas.",
+      "Nem todo fim é abandono. Às vezes o universo fecha uma porta porque o que está do outro lado te faria mal.",
+      "Você carrega mágoas antigas como se fossem suas. Algumas não são. É hora de devolver o que não pertence a você.",
+      "Aquela pessoa que foi embora levou o que era dela — mas deixou espaço para o que é seu de verdade.",
+      "Amar não é se perder. É se encontrar em alguém e ainda continuar sendo você.",
+      "O universo viu como você amou mesmo quando não foi correspondido. Esse amor não foi em vão — ele te moldou.",
+      "Há alguém pensando em você agora com muito mais carinho do que você imagina. Deixe-se ser amado.",
+      "Você tem dado muito e recebido pouco. O universo está reorganizando isso. O equilíbrio está chegando.",
+      "Aquele relacionamento que terminou? Não foi fracasso. Foi aprendizado com data de validade.",
+      "O amor que você busca lá fora começa dentro. O universo só entrega o que você já está pronto para receber.",
+      "Você tem medo de amar de novo porque já doeu. Mas fechar o coração também dói — de um jeito diferente.",
+      "Aquela pessoa especial que está na sua vida — diga o que sente. O universo não garante amanhã.",
+      "Você não é difícil de amar. Você foi amado de forma errada por pessoas que não sabiam o seu valor.",
+      "O amor verdadeiro não tem pressa, não tem ciúme doentio, não tem controle. Se o seu tem, reflita.",
+      "Há uma reconexão chegando — com alguém ou consigo mesmo. Ambas são formas de amor.",
+      "Você segurou tanto por tanto tempo. O universo diz: pode soltar. Pode confiar. Pode começar de novo.",
+      "Aquele gesto pequeno que você fez por amor foi visto. O universo registra tudo o que vem do coração.",
+      "Você merece alguém que fique. Que escolha. Que apareça. Não aceite quem só fica quando é fácil.",
+      "O coração que muito amou também muito aprendeu. Sua sensibilidade não é fraqueza — é sabedoria.",
+      "Aquela dúvida sobre continuar ou ir embora? No fundo, você já sabe. O universo está esperando sua coragem.",
+      "Amar com medo é humano. Mas viver paralisado pelo medo é desperdiçar o que o amor tem de mais bonito.",
+      "Você não precisa ser perfeito para merecer amor. Perfeição não existe — conexão real, sim.",
+      "Há um ciclo amoroso se fechando para que um novo, mais saudável, possa começar. Confie na transição.",
+      "Aquela saudade que você sente não é necessariamente de uma pessoa — pode ser de quem você era quando estava ao lado dela.",
+      "O universo uniu vocês por um motivo. Se ainda estão juntos, há algo a construir. Se se separaram, há algo a aprender.",
+      "Você tem dado chances demais para quem não merece e chances de menos para quem merece. É hora de reequilibrar.",
+      "Amar é um ato de coragem diário. E você tem sido muito corajoso — mesmo quando ninguém vê.",
+      "O amor que você dá ao mundo volta para você multiplicado. Continue sendo quem você é."
+    ],
+    trabalho: [
+      "Aquele projeto que você tem medo de começar? O universo diz: comece. O medo não vai embora antes — ele vai embora durante.",
+      "Você não está no lugar errado por acidente. Há algo a aprender onde você está antes de ir para onde quer chegar.",
+      "Aquela ideia que fica voltando à sua cabeça? Não é coincidência. É chamado. O universo está insistindo.",
+      "Você tem subestimado o quanto cresceu. Olhe para trás — a distância percorrida é maior do que parece.",
+      "Aquela oportunidade que você deixou passar? Outra está chegando. O universo é generoso com quem está atento.",
+      "Você foi feito para mais do que está fazendo agora. Mas mais começa com o próximo pequeno passo — não com o salto perfeito.",
+      "Aquela sensação de estar no lugar errado é informação valiosa. O universo usa desconforto para indicar direção.",
+      "Seu trabalho tem impacto maior do que você enxerga. Há pessoas sendo tocadas pelo que você faz — mesmo em silêncio.",
+      "O sucesso que você deseja está sendo construído agora, nos bastidores. O que você planta hoje, colhe amanhã.",
+      "Aquela comparação que você faz com os outros? Ela só faz sentido se você estiver na mesma corrida. E você não está.",
+      "Você tem talentos que ainda não reconheceu como talentos — porque para você é fácil e acha que para todos também é.",
+      "Aquela decisão de carreira que está te tirando o sono? O universo diz: não existe escolha errada — existe a próxima escolha.",
+      "Você está sendo preparado para um nível que ainda não chegou. O que parece espera é na verdade treinamento.",
+      "Aquele não que você recebeu recentemente não é o fim. É um redirecionamento. O universo tem rotas alternativas.",
+      "Você tem dado mais do que recebe no trabalho. O universo está vendo. O equilíbrio vem — às vezes de formas inesperadas.",
+      "Aquela pessoa difícil no trabalho? Ela está te ensinando algo sobre seus limites. Preste atenção na lição.",
+      "O propósito não é encontrado — é construído. Cada experiência sua é um tijolo. Continue construindo.",
+      "Você tem medo de errar na frente dos outros. Mas o universo sabe que os maiores aprendizados vêm dos maiores erros.",
+      "Aquela conversa difícil com seu chefe ou sócio? O universo diz que adiar só aumenta o custo. É hora.",
+      "Você foi colocado nessa posição porque o universo confia na sua capacidade — mesmo quando você não confia.",
+      "Há uma virada profissional se aproximando. O que parece estagnação é o universo reorganizando as peças.",
+      "Aquele sonho que você guardou na gaveta? Ele ainda está lá. E ainda é possível. O prazo não expirou.",
+      "Você não precisa de mais qualificação para começar. Você precisa de coragem para dar o primeiro passo imperfeito.",
+      "Aquela crítica que doeu? Separa o que é verdade do que é projeção de quem criticou. Fica com o ouro, descarta o resto.",
+      "O universo não desperdiça experiência. Tudo que você viveu profissionalmente tem uso no seu próximo capítulo.",
+      "Você tem valor antes de provar qualquer coisa. Lembre-se disso na próxima vez que sentir que precisa se justificar.",
+      "Aquela sensação de que deveria estar mais avançado? Você está exatamente onde precisa estar para aprender o que ainda precisa.",
+      "O dinheiro que você busca é consequência de valor que você ainda está descobrindo como entregar. Foque no valor.",
+      "Aquele projeto que parece impossível? O universo só coloca desafios que têm solução. Procure a solução.",
+      "Você tem mais aliados no trabalho do que imagina. Nem todos falam — mas muitos torcem.",
+      "Aquela área de interesse que você descarta por não dar dinheiro? O universo pede que você reconsidere.",
+      "Você está num momento de transição profissional. Confie no processo mesmo quando não vê o destino.",
+      "Aquela habilidade que você acha básica? Para muitos é extraordinária. Pare de subestimar o que você sabe fazer.",
+      "O universo colocou pessoas certas no seu caminho profissional. Reconheça quem são e cultive essas conexões.",
+      "Você vai olhar para trás daqui a algum tempo e entender por que esse momento difícil era necessário. Por enquanto, confie."
+    ],
+    medo: [
+      "Aquele medo que não te deixa dormir? Ele é grande porque o que está em jogo é importante. Isso é sinal — não motivo para parar.",
+      "Você já superou coisas que jurava que não conseguiria. O universo lembra — mesmo quando você esquece.",
+      "O medo de errar tem te custado mais do que os erros já custaram. Pense nisso.",
+      "Aquela coisa que você adia por medo? Cada dia que passa, o medo cresce. Ação é o único antídoto.",
+      "Você não precisa de coragem para dar o passo inteiro. Precisa de coragem apenas para o próximo meio passo.",
+      "Aquele cenário catastrófico que você imagina? O universo diz: na maioria das vezes, não é assim que acontece.",
+      "Você tem sido muito duro consigo mesmo pelos seus medos. Ter medo é humano. O que você faz com ele — isso é caráter.",
+      "Aquela situação que te paralisa? Pergunte: qual é o pior cenário real? E então: consigo lidar com ele? Quase sempre a resposta é sim.",
+      "O universo não pede que você seja destemido. Pede que você aja apesar do medo. Essa é a coragem real.",
+      "Aquele risco que você tem evitado? Às vezes o maior risco é não arriscar — e perder o que poderia ter sido.",
+      "Você tem medo de decepcionar as pessoas. Mas ao se trair para não decepcionar, você já está se decepcionando.",
+      "Aquela voz que diz você não é capaz? Ela mente. O universo não te daria o desejo sem a capacidade.",
+      "O medo do julgamento tem te impedido de ser quem você realmente é. A opinião dos outros não paga sua felicidade.",
+      "Você tem medo de começar porque tem medo de não terminar. Mas não começar garante o fracasso que você tanto teme.",
+      "Aquela mudança que você teme? O universo já mudou muita coisa na sua vida sem você pedir — e você sobreviveu a todas.",
+      "O medo de não ser suficiente é a mentira mais antiga que existe. Você já é suficiente — e ainda vai crescer muito.",
+      "Aquela conversa corajosa que você precisa ter? O universo diz que o momento certo é agora. Não existe momento perfeito.",
+      "Você tem protegido tanto seu coração que esqueceu de usá-lo. Muralhas impedem também a alegria.",
+      "Aquele salto que parece grande demais? O universo costuma colocar uma rede de proteção que você só vê depois de pular.",
+      "O medo de ser feliz — de que vai acabar — tem te impedido de aproveitar enquanto está. Viva o agora.",
+      "Você tem medo de pedir ajuda porque acha que vai parecer fraco. Pedir ajuda é saber onde estão seus recursos.",
+      "Você tem vivido no futuro imaginário — antecipando problemas que talvez não cheguem. O presente precisa de você agora.",
+      "Aquele medo de ser abandonado está moldando escolhas que não são suas — são do medo. Separe um do outro.",
+      "O universo não te colocou aqui para sobreviver. Te colocou para viver. Há uma diferença enorme entre as duas coisas.",
+      "Você tem sido corajoso de formas que ninguém vê — nas escolhas silenciosas, nos recomeços discretos. Isso conta.",
+      "Aquele problema que parece sem saída? O universo já viu situações piores se resolverem. Essa também vai.",
+      "O medo de mudar é o medo de perder quem você é. Mas quem você vai se tornar é melhor do que quem você está sendo por medo.",
+      "Você tem mais recursos internos do que usa. O medo os esconde. Quando o medo diminuir, você vai se surpreender.",
+      "Aquela decisão difícil que você precisa tomar? O universo diz: você já sabe a resposta. O que falta é aceitar o que ela implica.",
+      "Coragem não é ausência de medo. É dar o próximo passo mesmo tremendo. E você já fez isso antes."
+    ],
+    escolhas: [
+      "Aquela escolha que te assombra? O universo diz: com as informações que você tinha, fez o melhor que podia. Perdoe-se.",
+      "Você está num cruzamento. Qualquer caminho que escolher vai te ensinar algo que o outro não ensinaria. Não existe escolha errada.",
+      "Aquele capítulo que você quer fechar mas não consegue? O universo diz: o fim começa com uma decisão, não com uma condição.",
+      "Você tem esperado as circunstâncias mudarem para começar. O universo diz: comece — as circunstâncias mudam depois.",
+      "Aquele recomeço que parece tarde demais? Para o universo não existe tarde. Existe agora, e agora é suficiente.",
+      "Você está carregando uma versão velha de si mesmo. É hora de atualizar. Quem você era não precisa definir quem você será.",
+      "Aquela situação da qual você quer sair mas não sabe como? O primeiro passo é decidir que vai sair. O como vem depois.",
+      "O universo não fecha portas para te punir. Fecha para que você pare de entrar onde não te faz bem.",
+      "Você tem repetido padrões esperando resultados diferentes. Para o padrão mudar, algo em você precisa mudar primeiro.",
+      "Aquela pessoa ou situação que você ainda não conseguiu soltar? Segurar o que já foi te impede de receber o que está vindo.",
+      "Você tem medo de recomeçar do zero. Mas não é do zero — é do tudo que você aprendeu até aqui.",
+      "Aquela decisão que você se arrepende? Ela te trouxe exatamente até onde você precisa estar agora. Isso tem valor.",
+      "O universo oferece recomeços todos os dias. A questão não é se há uma chance — é se você vai reconhecê-la.",
+      "Você está esperando certeza para agir. Mas certeza vem depois da ação — nunca antes.",
+      "Aquele plano que não funcionou? O universo estava te redirecionando para um plano melhor que você ainda não via.",
+      "Você tem carregado culpa por escolhas que fez num momento de dor. Escolhas feitas na dor merecem compaixão.",
+      "Aquela mudança que você tanto quer? Ela começa com uma conversa — consigo mesmo, com alguém importante, com o universo.",
+      "O universo não te cobra perfeição nas escolhas. Te cobra presença e intenção. Você tem dado isso.",
+      "Aquele sonho que você abandonou por ser irreal? O universo diz que a realidade é mais maleável do que você pensa.",
+      "Você está num ciclo que se repete. Identificar o ciclo é o primeiro passo para quebrá-lo. Você já identificou?",
+      "Aquela oportunidade que você deixou passar por medo? Outra está chegando — mas dessa vez o universo espera que você aja.",
+      "Recomeçar não é apagar o passado. É usar o passado como fundação para construir algo mais sólido.",
+      "Você tem pedido sinais ao universo. Este é um. O sinal é: mova-se. A direção se clarifica no movimento.",
+      "Aquela escolha entre o seguro e o verdadeiro? O universo torce pelo verdadeiro — mesmo que o caminho seja mais longo.",
+      "Você não precisa ter tudo resolvido para dar o próximo passo. Você precisa só de clareza sobre qual é o próximo passo.",
+      "Aquele relacionamento, emprego ou lugar do qual você precisa sair? O universo confirma o que você já sabe.",
+      "Você tem mais poder sobre sua vida do que acredita. As circunstâncias influenciam — mas não determinam.",
+      "Aquele recomeço que você planeja mas não inicia? O melhor momento foi ontem. O segundo melhor é agora.",
+      "Você está exatamente onde precisa estar para aprender o que precisa antes de ir aonde quer chegar.",
+      "Aquela versão de você que você quer ser? Ela já existe — está esperando que você tome as decisões que ela tomaria."
+    ],
+    cura: [
+      "Aquela dor que você tenta não sentir? Ela não vai embora sendo ignorada. O universo diz: sinta, para que possa curar.",
+      "Você tem cuidado de todos ao redor e esquecido de cuidar de si. O universo está te lembrando: você também está na lista.",
+      "Aquela ferida antiga que ainda dói quando tocada? Ela ainda dói porque ainda tem algo a te ensinar. Ouça-a com gentileza.",
+      "Você não precisa estar completamente curado para ser feliz. Cura e felicidade podem coexistir no mesmo momento.",
+      "Aquele comportamento seu que você não entende? Olhe para onde ele nasceu — provavelmente na infância. Com compaixão.",
+      "Você tem sido seu pior crítico. O universo te vê com muito mais gentileza do que você se vê.",
+      "Aquela pessoa que te magoou profundamente? Perdoar não é dizer que estava certo — é se libertar do peso do ressentimento.",
+      "Você carrega a dor dos outros como se fosse sua. Sentir empatia é lindo — mas absorver a dor dos outros te adoece.",
+      "Aquele padrão de autossabotagem que você reconhece em si? Reconhecer já é metade da cura. A outra metade é escolher diferente.",
+      "Você merece o mesmo cuidado que dá aos outros. Sem exceção. Sem condição.",
+      "Aquela voz interna cruel e exigente? Ela aprendeu a ser assim com alguém. Não precisa continuar esse trabalho.",
+      "O universo não te julga pelo que você sente. Sentimentos não são certos ou errados — são informação.",
+      "Aquele momento de fraqueza do qual você se envergonha? O universo o viu como um momento de humanidade.",
+      "Você tem evitado o silêncio porque no silêncio você encontra o que ainda precisa ser resolvido. É hora de sentar com isso.",
+      "Aquela sensação de vazio que aparece às vezes? Não é ausência de propósito — é o espaço que o propósito ainda vai ocupar.",
+      "Você tem buscado aprovação fora porque aprender a se aprovar por dentro é o trabalho mais difícil. Mas é o mais importante.",
+      "Aquele hábito que te faz mal mas você mantém? Ele está preenchendo uma necessidade. Descubra qual — e encontre algo mais saudável.",
+      "Você não é seus traumas. Você é quem escolhe o que fazer com eles.",
+      "Aquela parte de você que você esconde dos outros? Ela não é o seu defeito — pode ser o seu maior dom disfarçado.",
+      "Você tem se comparado com versões públicas das pessoas — que são sempre incompletas. Compare-se apenas com quem era ontem.",
+      "Aquela relação com seu corpo que não é gentil? O corpo carrega tudo que a mente não processa. Seja mais gentil com ele.",
+      "Você tem usado a ocupação como fuga. O que você está evitando sentir quando para?",
+      "Aquela parte de você que acha que não merece coisas boas? Ela foi ensinada a pensar assim. Não é verdade.",
+      "Você está crescendo — mesmo quando a sensação é de estar regredindo. Crescimento raramente é linear.",
+      "Aquele relacionamento tóxico do passado ainda tem eco no presente? É hora de conscientizar esse eco para que pare de ecoar.",
+      "Você tem muito mais recursos internos do que acessa. A cura abre a porta para eles.",
+      "Aquela necessidade que você tem mas não consegue pedir? Pedir o que você precisa não é fraqueza. É autocuidado.",
+      "Você tem se punido por não ser quem achava que deveria ser. O universo te ama exatamente como você é — enquanto você cresce.",
+      "Aquele dia difícil que você está tendo? Ele vai passar. E você vai lembrar que passou — e que foi mais forte do que achava.",
+      "Você não precisa resolver tudo hoje. O universo entende que cura tem seu próprio tempo. Respeite o seu.",
+      "Aquela crença limitante mais profunda que você carrega? É hora de examiná-la. De onde veio? Ainda serve?",
+      "Você tem dado a outros o que não dá a si mesmo: paciência, compaixão, segunda chance. Comece por você.",
+      "Aquela sensação de não pertencer? Muitas vezes é sinal de que você pertence a um lugar que ainda não encontrou.",
+      "O universo está te curando em camadas. Nem tudo se resolve de uma vez. Confie no processo mesmo quando parece lento.",
+      "Você merece paz. Não como recompensa por ter sofrido — mas como direito de existir."
+    ],
+    fe: [
+      "Aquela oração que você fez e parece não ter sido respondida? O universo responde sempre — às vezes com um não que é proteção.",
+      "Você tem sentido a presença de algo maior do que você. Esse sentido não mente. Confie nele.",
+      "Aquele momento de sincronicidade que você viveu recentemente? Não foi coincidência. O universo estava te enviando uma mensagem.",
+      "Você está sendo guiado — mesmo quando não sente. Especialmente quando não sente.",
+      "Aquela fase escura que você atravessou? Ela tinha um propósito que só o tempo vai revelar completamente.",
+      "O universo não abandona quem tem fé — mesmo que a fé seja pequena como um grão de mostarda.",
+      "Aquela sensação de que algo vai mudar? Confie nela. Sua intuição é uma forma do universo falar com você.",
+      "Você tem pedido sinais e recebido — mas duvidado deles. O universo diz: aprenda a confiar no que chega.",
+      "Aquele sonho durante a noite que ficou na sua cabeça? O universo às vezes fala no silêncio do sono. Vale prestar atenção.",
+      "Você está sendo preparado para algo maior. O preparo raramente parece glorioso — mas o resultado sim.",
+      "Aquela perda que você não consegue entender? O universo não desperdiça dor. Ela está sendo transformada em algo.",
+      "Você tem mais ancestrais torcendo por você do que imagina. Você não está sozinho nessa jornada.",
+      "Aquele lugar que te traz paz? Vá até ele. O universo fala mais claramente quando você está em paz.",
+      "Você foi colocado neste planeta com um propósito único. Ninguém mais pode cumpri-lo. Isso é sagrado.",
+      "Aquela gratidão que você sente por coisas pequenas? Ela é o idioma que o universo mais gosta de ouvir.",
+      "O universo trabalha em tempos diferentes dos seus. O que parece demora é muitas vezes alinhamento perfeito sendo preparado.",
+      "Aquela intuição que você ignorou e depois se arrependeu? Da próxima vez, ouça primeiro.",
+      "Você tem uma missão que vai além de você mesmo. Ela está sendo revelada aos poucos — em cada escolha que você faz com amor.",
+      "Aquele momento em que você se sentiu completamente em paz? Esse estado é possível com mais frequência do que você pensa.",
+      "Você tem sido instrumento de cura para pessoas sem nem perceber. O universo usa quem tem coração aberto.",
+      "Aquela sensação de déjà vu? A alma reconhece o que a mente ainda está processando.",
+      "O universo conspira — sempre. A questão é: você está conspirado junto, ou contra?",
+      "Aquele ritual ou prática espiritual que você abandonou? Volte para ele. Você precisa agora mais do que antes.",
+      "Você tem duvidado da sua fé nos momentos difíceis. É exatamente nesses momentos que a fé tem mais poder.",
+      "Aquela pessoa que foi embora cedo demais? Ela cumpriu o que veio cumprir. A saudade é amor que não tem para onde ir.",
+      "O universo te enviou pessoas como espelhos — para te mostrar o que você ainda precisa ver em si mesmo.",
+      "Aquela fase de deserto espiritual que você está atravessando? Todo grande crescimento passa por um deserto.",
+      "Você tem mais proteção espiritual do que sente. Às vezes a proteção age justamente impedindo o que não era para você.",
+      "Aquele pedido que você tem feito repetidamente? O universo ouviu na primeira vez. A resposta está vindo no tempo certo.",
+      "Você foi criado para ser exatamente quem você é — com todas as suas particularidades. Isso é divino, não acidental.",
+      "Aquela coincidência que mudou o rumo de algo? O universo chama de providência o que você chama de coincidência.",
+      "Você tem uma luz que o mundo precisa ver. Não a esconda por humildade falsa — brilhe com humildade verdadeira.",
+      "Aquele momento de gratidão profunda que você sentiu? Cultive-o. É o estado de espírito que mais atrai bênçãos.",
+      "O universo não te esqueceu. Nunca te esqueceu. Você está sendo cuidado de formas que ainda não consegue ver completamente.",
+      "Aquela mensagem que você precisava ouvir hoje? Era essa. O universo sabe o que você precisa — antes mesmo de você perguntar."
+    ]
+  };
+
+  let temaAtual = null;
+  let frasesUsadasPagas = {};
+
+  function getFrasePaga(tema) {
+    const lista = FRASES_PAGAS[tema];
+    if (!frasesUsadasPagas[tema]) frasesUsadasPagas[tema] = [];
+    const usadas = frasesUsadasPagas[tema];
+    const disponiveis = lista.map((_, i) => i).filter(i => !usadas.includes(i));
+    if (disponiveis.length === 0) frasesUsadasPagas[tema] = [];
+    const indice = disponiveis.length > 0
+      ? disponiveis[Math.floor(Math.random() * disponiveis.length)]
+      : Math.floor(Math.random() * lista.length);
+    frasesUsadasPagas[tema].push(indice);
+    return lista[indice];
   }
 
-  async function gerarMensagem() {
+  function abrirSeletorTema() {
+    const overlay = document.createElement('div');
+    overlay.id = 'temaModal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:20px;padding:2rem;max-width:420px;width:100%;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">🥠</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:#1A1208;margin-bottom:0.5rem;">O universo está pronto</h3>
+        <p style="font-size:0.95rem;color:#3A3020;margin-bottom:1.5rem;line-height:1.6;">Sobre o que você precisa de uma mensagem hoje?</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+          <button onclick="escolherTema('amor')" style="padding:14px 10px;background:#FDF0C8;border:1.5px solid #A07800;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;color:#6B4F00;cursor:pointer;">💛 Amor</button>
+          <button onclick="escolherTema('trabalho')" style="padding:14px 10px;background:#FDF0C8;border:1.5px solid #A07800;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;color:#6B4F00;cursor:pointer;">💼 Trabalho</button>
+          <button onclick="escolherTema('medo')" style="padding:14px 10px;background:#FDF0C8;border:1.5px solid #A07800;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;color:#6B4F00;cursor:pointer;">😨 Medo e Coragem</button>
+          <button onclick="escolherTema('escolhas')" style="padding:14px 10px;background:#FDF0C8;border:1.5px solid #A07800;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;color:#6B4F00;cursor:pointer;">🔄 Escolhas</button>
+          <button onclick="escolherTema('cura')" style="padding:14px 10px;background:#FDF0C8;border:1.5px solid #A07800;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;color:#6B4F00;cursor:pointer;">🌱 Cura</button>
+          <button onclick="escolherTema('fe')" style="padding:14px 10px;background:#FDF0C8;border:1.5px solid #A07800;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;color:#6B4F00;cursor:pointer;">✨ Fé</button>
+        </div>
+        <button onclick="escolherTema('surpresa')" style="width:100%;padding:12px;background:#1A1208;color:#E8CC7E;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;">🎲 Surpreenda-me</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  async function escolherTema(tema) {
+    const modal = document.getElementById('temaModal');
+    if (modal) modal.remove();
+
+    if (tema === 'surpresa') {
+      const temas = Object.keys(FRASES_PAGAS);
+      tema = temas[Math.floor(Math.random() * temas.length)];
+    }
+    temaAtual = tema;
+    isLoading = true;
+    await gerarMensagemPaga(tema);
+  }
+
+  async function gerarMensagemPaga(tema) {
+    document.getElementById('shareCardQuote').innerHTML = '<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+    await new Promise(r => setTimeout(r, 800));
+
+    let frase = getFrasePaga(tema);
+    if (currentNome) {
+      frase = frase.replace('Você ', `${currentNome}, você `);
+    }
+
+    currentMsg = frase;
+    document.getElementById('shareCardQuote').textContent = currentMsg;
+    isLoading = false;
+  }
+
+  let frasesUsadas = [];
+
+  async function carregarFrasesUsadas() {
+    if (currentEmail) {
+      // Busca frases vistas no Supabase
+      const { data } = await sb.from('usuarios').select('frases_vistas').eq('email', currentEmail).single();
+      frasesUsadas = data?.frases_vistas || [];
+    } else {
+      // Usa localStorage para anônimos
+      try { frasesUsadas = JSON.parse(localStorage.getItem('frasesVistas') || '[]'); } catch { frasesUsadas = []; }
+    }
+  }
+
+  async function salvarFraseUsada(indice) {
+    frasesUsadas.push(indice);
+    // Reseta se já viu todas
+    if (frasesUsadas.length >= FRASES.length) frasesUsadas = [];
+    if (currentEmail) {
+      await sb.from('usuarios').update({ frases_vistas: frasesUsadas }).eq('email', currentEmail);
+    } else {
+      try { localStorage.setItem('frasesVistas', JSON.stringify(frasesUsadas)); } catch {}
+    }
+  }
+
+  function getFraseAleatoria() {
+    let indice;
+    const disponiveis = FRASES.map((_, i) => i).filter(i => !frasesUsadas.includes(i));
+    if (disponiveis.length === 0) {
+      frasesUsadas = [];
+      indice = Math.floor(Math.random() * FRASES.length);
+    } else {
+      indice = disponiveis[Math.floor(Math.random() * disponiveis.length)];
+    }
+    return { frase: FRASES[indice], indice };
+  }
+
+  async function gerarMensagem(aleatoria = false) {
     document.getElementById('shareCardQuote').innerHTML = '<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 
     await new Promise(r => setTimeout(r, 800));
 
-    let frase = getFraseDoDia();
+    const { frase: fraseBase, indice } = getFraseAleatoria();
+    await salvarFraseUsada(indice);
 
+    let frase = fraseBase;
     if (currentNome) {
       const meio = Math.floor(frase.length / 2);
       const pontoMeio = frase.indexOf('.', meio);
@@ -1044,24 +1356,26 @@
     if (isLoading) return;
 
     if (currentEmail) {
-      // Verifica saldo no Supabase
       const { data } = await sb.from('usuarios').select('biscoitos').eq('email', currentEmail).single();
       const saldo = data ? data.biscoitos : 0;
 
       if (saldo <= 0) {
-        // Sem biscoitos — abre modal de pacotes
         const abrir = confirm('Você não tem mais biscoitos disponíveis.\n\nQuer adquirir um pacote para continuar recebendo mensagens do universo?');
         if (abrir) abrirPacotes();
         return;
       }
 
-      // Debita 1 biscoito
       await sb.from('usuarios').update({ biscoitos: saldo - 1 }).eq('email', currentEmail);
       atualizarSaldoDisplay(saldo - 1);
+
+      // Abre seletor de tema para biscoitos pagos
+      abrirSeletorTema();
+      return;
     }
 
+    // Sem email — frase gratuita aleatória
     isLoading = true;
-    await gerarMensagem();
+    await gerarMensagem(true);
   }
 
   function atualizarSaldoDisplay(saldo) {
