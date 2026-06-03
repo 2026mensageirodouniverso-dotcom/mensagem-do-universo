@@ -416,7 +416,7 @@
       </div>
       <p class="cookie-hint" id="cookieHint">Toque no biscoito para revelar ✦</p>
       <button onclick="abrirPacotes()" style="margin-top:1rem;padding:12px 28px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:99px;font-family:var(--sans);font-size:0.9rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(160,120,0,0.3);transition:all 0.2s;">
-        ✦ Quero mensagens profundas
+        ✦ Quero comprar mensagens profundas
       </button>
     </div>
 
@@ -487,7 +487,7 @@
       <div id="saldoBiscoitos" style="font-size:0.82rem;color:var(--gold-dim);font-weight:600;text-align:center;margin-top:4px;display:none;"></div>
 
       <button onclick="abrirPacotes()" style="width:100%;margin-top:1rem;padding:15px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:12px;font-family:var(--sans);font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(160,120,0,0.25);transition:all 0.2s;">
-        🥠 Quero mensagens profundas e direcionadas
+        🥠 Quero comprar mensagens profundas e direcionadas
       </button>
       <p style="font-size:0.75rem;color:var(--ink-soft);text-align:center;margin-top:6px;">Escolha o tema e receba uma mensagem oracular só para você</p>
 
@@ -1443,11 +1443,21 @@
   async function buscarOuCriarUsuario(email, nome) {
     if (!email) return null;
     try {
+      // Primeiro tenta buscar
       const { data } = await sb.from('usuarios').select('*').eq('email', email).single();
-      if (data) return data;
-      const { data: novo } = await sb.from('usuarios').insert([{ email, nome, biscoitos: 1, total_pago: 0 }]).select().single();
+      if (data) return data; // Já existe — não cria de novo
+      // Só cria se realmente não existe
+      const { data: novo } = await sb.from('usuarios')
+        .insert([{ email, nome, biscoitos: 1, total_pago: 0, frases_vistas: [] }])
+        .select().single();
       return novo;
-    } catch { return null; }
+    } catch(e) {
+      // Se erro for de duplicata (usuário já existe), apenas busca
+      try {
+        const { data } = await sb.from('usuarios').select('*').eq('email', email).single();
+        return data;
+      } catch { return null; }
+    }
   }
 
   async function adicionarBiscoitos(email, quantidade, valorPago) {
@@ -1459,9 +1469,8 @@
           biscoitos: (data.biscoitos || 0) + quantidade,
           total_pago: (data.total_pago || 0) + valorPago
         }).eq('email', email);
-      } else {
-        await sb.from('usuarios').insert([{ email, nome: currentNome, biscoitos: quantidade, total_pago: valorPago }]);
       }
+      // Se não existe, não cria — usuário deve ter se cadastrado antes
     } catch(e) { console.error('Erro Supabase:', e); }
   }
 
