@@ -6,7 +6,7 @@
   <title>Mensagem do Universo — Seu biscoito da sorte diário</title>
   <meta name="description" content="O Universo quer o melhor pra você. Abra seu biscoito da sorte diário e receba uma mensagem gerada especialmente para o seu momento.">
   <meta property="og:title" content="Mensagem do Universo">
-  <meta property="og:description" content="O Universo quer o melhor pra você. Uma mensagem única, gerada por IA, só pra você — todo dia.">
+  <meta property="og:description" content="O Universo quer o melhor pra você. Uma mensagem mística e profunda, gerada especialmente para o seu momento — todo dia.">
   <meta property="og:url" content="https://mensagemdouniverso.com.br">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -131,12 +131,12 @@
     .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; color: var(--ink-mid); cursor: pointer; line-height: 1; }
 
     /* PACOTES */
-    .pacotes-overlay { position: fixed; inset: 0; background: rgba(26,18,8,0.55); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1.5rem; animation: fade-in 0.2s ease; }
+    .pacotes-overlay { position: fixed; inset: 0; background: rgba(26,18,8,0.55); z-index: 100; display: flex; align-items: flex-end; justify-content: center; padding: 0; animation: fade-in 0.2s ease; }
     .pacotes-overlay.hidden { display: none; }
-    .pacotes-box { background: var(--white); border-radius: 20px; padding: 2.5rem 2rem; max-width: 520px; width: 100%; text-align: center; animation: slide-up 0.3s ease; position: relative; }
-    .pacotes-title { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; margin-bottom: 0.5rem; }
-    .pacotes-sub { font-size: 0.88rem; color: var(--ink-soft); margin-bottom: 1.75rem; }
-    .pacotes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1.25rem; }
+    .pacotes-box { background: var(--white); border-radius: 20px 20px 0 0; padding: 1.5rem 1.25rem 2rem; max-width: 520px; width: 100%; text-align: center; animation: slide-up 0.3s ease; position: relative; max-height: 92vh; overflow-y: auto; }
+    .pacotes-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; margin-bottom: 0.25rem; }
+    .pacotes-sub { font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 1rem; }
+    .pacotes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 1rem; }
     .pacote-card { border: 0.5px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 1.25rem 0.75rem; cursor: pointer; transition: all 0.2s; position: relative; }
     .pacote-card:hover { border-color: var(--gold); background: var(--gold-pale); }
     .pacote-card.selected { border: 2px solid var(--gold); background: var(--gold-pale); }
@@ -285,7 +285,7 @@
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div style="font-size:2rem;margin-bottom:1rem;">🥠</div>
     <h2 class="modal-title">Qual é o seu nome?</h2>
-    <p class="modal-sub">Sua mensagem será personalizada e aparecerá no card para compartilhar — mostrando ao mundo que foi gerada só para você.</p>
+    <p class="modal-sub">O universo vai sussurrar uma mensagem mística e profunda especialmente para você — e seu nome aparecerá no card para compartilhar.</p>
     <input class="modal-name" id="inputNome" type="text" placeholder="Seu nome (ex: Ana)" maxlength="30">
     <input class="modal-input" id="inputEmail" type="email" placeholder="Seu e-mail (para acessar biscoitos pagos)">
     <button class="modal-btn" onclick="confirmarCadastro()">✦ Abrir meu biscoito</button>
@@ -317,9 +317,9 @@
         <div class="pacote-preco">R$ 12,90</div>
         <div class="pacote-social">♥ R$ 2,58 p/ causa</div>
       </div>
-      <div class="pacote-card" id="p3" onclick="selecionarPacote('p3',3490,'Família (100 biscoitos)')">
+      <div class="pacote-card" id="p3" onclick="selecionarPacote('p3',3490,'Abundância (100 biscoitos)')">
         <span class="pacote-emoji">🥠</span>
-        <div class="pacote-nome">Família</div>
+        <div class="pacote-nome">Abundância</div>
         <div class="pacote-qtd">100</div>
         <div class="pacote-biscoitos">biscoitos</div>
         <div class="pacote-preco">R$ 34,90</div>
@@ -352,7 +352,7 @@
   <section class="hero">
     <div class="eyebrow">✦ seu biscoito da sorte diário ✦</div>
     <h1 class="hero-title">O Universo quer<br>o <em>melhor</em> pra você</h1>
-    <p class="hero-sub" id="heroSub">Veja o que ele tem a dizer hoje. Uma mensagem única, gerada por inteligência artificial, especialmente para o seu momento.</p>
+    <p class="hero-sub" id="heroSub">Veja o que ele tem a dizer hoje. Uma mensagem mística e profunda, gerada especialmente para o seu momento.</p>
 
     <div class="mood-section" id="moodSection">
       <div class="mood-label">Como você está se sentindo?</div>
@@ -415,6 +415,9 @@
         </button>
       </div>
       <p class="cookie-hint" id="cookieHint">Toque no biscoito para revelar ✦</p>
+      <button onclick="abrirPacotes()" style="margin-top:1rem;padding:12px 28px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:99px;font-family:var(--sans);font-size:0.9rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(160,120,0,0.3);transition:all 0.2s;">
+        ✦ Quero mensagens profundas
+      </button>
     </div>
 
     <!-- RESULTADO -->
@@ -482,7 +485,11 @@
 
       <button class="nova-btn" onclick="novaMensagem()">↻ Gerar nova mensagem</button>
       <div id="saldoBiscoitos" style="font-size:0.82rem;color:var(--gold-dim);font-weight:600;text-align:center;margin-top:4px;display:none;"></div>
-      <button class="nova-btn" style="color:var(--gold-dim);font-weight:500;" onclick="abrirPacotes()">🥠 Quero mais biscoitos personalizados</button>
+
+      <button onclick="abrirPacotes()" style="width:100%;margin-top:1rem;padding:15px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:12px;font-family:var(--sans);font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(160,120,0,0.25);transition:all 0.2s;">
+        🥠 Quero mensagens profundas e direcionadas
+      </button>
+      <p style="font-size:0.75rem;color:var(--ink-soft);text-align:center;margin-top:6px;">Escolha o tema e receba uma mensagem oracular só para você</p>
 
       <div class="cd-bar">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -497,7 +504,7 @@
     <h2 class="section-title">Como funciona</h2>
     <div class="steps">
       <div class="step"><span class="step-icon">🥠</span><div class="step-title">Abra seu biscoito</div><p class="step-text">Todo dia um biscoito grátis te espera. Clique, quebre e receba sua mensagem do universo.</p></div>
-      <div class="step"><span class="step-icon">✨</span><div class="step-title">IA gera sua mensagem</div><p class="step-text">A inteligência artificial cria uma frase personalizada com seu nome, especialmente para o seu estado de espírito.</p></div>
+      <div class="step"><span class="step-icon">✨</span><div class="step-title">O universo fala com você</div><p class="step-text">Uma mensagem mística e profunda é revelada especialmente para o seu momento e estado de espírito.</p></div>
       <div class="step"><span class="step-icon">🖼️</span><div class="step-title">Baixe seu card</div><p class="step-text">Escolha um fundo lindo, baixe o card e compartilhe. Quem vê vai querer o seu também.</p></div>
       <div class="step"><span class="step-icon">💌</span><div class="step-title">Espalhe amor</div><p class="step-text">Cada compartilhamento leva sua mensagem adiante — e 20% de cada pacote pago vai para uma causa social.</p></div>
     </div>
@@ -541,7 +548,7 @@
     <a href="mailto:2026mensageirodouniverso@gmail.com">Contato</a>
     <a href="https://facebook.com/mensageirodouniverso" target="_blank">Facebook</a>
   </div>
-  <div class="footer-copy">© 2026 Mensagem do Universo. Feito com amor e IA.</div>
+  <div class="footer-copy">© 2026 Mensagem do Universo. Feito com amor e mistério.</div>
 </footer>
 
 <script>
@@ -557,6 +564,14 @@
   let isLoading = false;
   let isPago = false;
   let pacoteSelecionado = { id:'p2', valor:1290, nome:'Mensal (30 biscoitos)' };
+
+  // Carrega dados salvos do localStorage
+  try {
+    const savedNome = localStorage.getItem('mdv_nome');
+    const savedEmail = localStorage.getItem('mdv_email');
+    if (savedNome) currentNome = savedNome;
+    if (savedEmail) currentEmail = savedEmail;
+  } catch(e) {}
 
   const bgs = {
     cosmos: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80',
@@ -582,6 +597,11 @@
 
   function handleCookieClick() {
     if (isLoading) return;
+    // Se já tem nome/email salvos, abre direto sem pedir de novo
+    if (currentNome || currentEmail) {
+      executarAbertura();
+      return;
+    }
     document.getElementById('modalOverlay').classList.remove('hidden');
   }
 
@@ -594,6 +614,11 @@
     const email = document.getElementById('inputEmail').value.trim();
     currentNome = nome || '';
     currentEmail = email || '';
+    // Salva no localStorage para reconhecimento futuro
+    try {
+      if (currentNome) localStorage.setItem('mdv_nome', currentNome);
+      if (currentEmail) localStorage.setItem('mdv_email', currentEmail);
+    } catch(e) {}
     closeModal();
     if (currentEmail) await buscarOuCriarUsuario(currentEmail, currentNome);
     executarAbertura();
@@ -1412,7 +1437,7 @@
   const PIX_PAYLOADS = {
     p1: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com52040000530398654044.905802BR5917Mensagem Universo6012Porto Alegre62140510BISCOITO106304351D', valor: 'R$ 4,90', nome: 'Starter (10 biscoitos)', biscoitos: 10 },
     p2: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540512.905802BR5917Mensagem Universo6012Porto Alegre62140510BISCOITO306304CCFB', valor: 'R$ 12,90', nome: 'Mensal (30 biscoitos)', biscoitos: 30 },
-    p3: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540534.905802BR5917Mensagem Universo6012Porto Alegre62150511BISCOITO1006304A187', valor: 'R$ 34,90', nome: 'Família (100 biscoitos)', biscoitos: 100 }
+    p3: { payload: '00020126420014BR.GOV.BCB.PIX0120maxrathke3@gmail.com520400005303986540534.905802BR5917Mensagem Universo6012Porto Alegre62150511BISCOITO1006304A187', valor: 'R$ 34,90', nome: 'Abundância (100 biscoitos)', biscoitos: 100 }
   };
 
   async function buscarOuCriarUsuario(email, nome) {
@@ -1443,15 +1468,17 @@
   async function pagarPix() {
     const pix = PIX_PAYLOADS[pacoteSelecionado.id];
     fecharPacotes();
+    pagamentoConfirmado = false; // Reset para novo pagamento
 
     const overlay = document.createElement('div');
     overlay.id = 'pixModal';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0;';
     overlay.innerHTML = `
-      <div style="background:#fff;border-radius:20px;padding:2rem;max-width:380px;width:100%;text-align:center;position:relative;">
+      <div style="background:#fff;border-radius:20px 20px 0 0;padding:1.75rem 1.5rem 2rem;max-width:480px;width:100%;text-align:center;position:relative;max-height:92vh;overflow-y:auto;">
+        <button onclick="document.getElementById('pixModal').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#4A3F2F;line-height:1;">✕</button>
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:0.25rem;">🥠 Pagar com Pix</h3>
         <p style="font-size:0.9rem;color:#3A3020;margin-bottom:1rem;">${pix.nome} — <strong>${pix.valor}</strong></p>
-        <div id="qrcode-container" style="margin:0 auto 1rem;width:200px;height:200px;"></div>
+        <div id="qrcode-container" style="margin:0 auto 1rem;width:180px;height:180px;"></div>
         <p style="font-size:0.85rem;color:#3A3020;margin-bottom:0.75rem;">Escaneie o QR Code com o app do seu banco</p>
         <button onclick="copiarPix('${pix.payload}')" style="width:100%;padding:12px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:0.75rem;">
           📋 Copiar código Pix
@@ -1468,7 +1495,7 @@
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
     script.onload = () => {
       new QRCode(document.getElementById('qrcode-container'), {
-        text: pix.payload, width: 200, height: 200,
+        text: pix.payload, width: 180, height: 180,
         colorDark: '#1A1208', colorLight: '#ffffff'
       });
     };
@@ -1496,21 +1523,21 @@
     pagamentoConfirmado = true;
     if (modal) modal.remove();
     isPago = true;
-    await carregarSaldo(); // Atualiza display do saldo
+    await carregarSaldo();
 
     const conf = document.createElement('div');
     conf.id = 'pixConfirmacao';
-    conf.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+    conf.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0;';
     conf.innerHTML = `
-      <div style="background:#fff;border-radius:20px;padding:2.5rem 2rem;max-width:380px;width:100%;text-align:center;">
+      <div style="background:#fff;border-radius:20px 20px 0 0;padding:2rem 1.5rem 2.5rem;max-width:480px;width:100%;text-align:center;">
         <div style="font-size:3rem;margin-bottom:1rem;">🥠✨</div>
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;color:#1A1208;margin-bottom:0.75rem;">Pagamento confirmado!</h3>
-        <p style="font-size:1rem;color:#3A3020;line-height:1.6;margin-bottom:0.75rem;">
+        <p style="font-size:1rem;color:#3A3020;line-height:1.6;margin-bottom:0.5rem;">
           ${currentNome ? `${currentNome}, seus` : 'Seus'} <strong>${pix.biscoitos} biscoitos</strong> foram creditados com sucesso.
         </p>
         <p style="font-size:0.9rem;color:#6B4F00;margin-bottom:1.5rem;">O universo tem muito pra te dizer. 💛</p>
-        <button onclick="document.getElementById('pixConfirmacao').remove()" style="width:100%;padding:13px;background:#1A1208;color:#E8CC7E;border:none;border-radius:10px;font-size:1rem;font-weight:500;cursor:pointer;margin-bottom:0.5rem;">
-          ✦ Abrir meu biscoito
+        <button onclick="document.getElementById('pixConfirmacao').remove();novaMensagem();" style="width:100%;padding:14px;background:linear-gradient(135deg,#A07800,#6B4F00);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;margin-bottom:0.75rem;letter-spacing:0.03em;">
+          ✦ Gerar minha mensagem agora
         </button>
         <button onclick="document.getElementById('pixConfirmacao').remove()" style="width:100%;padding:10px;background:none;border:1.5px solid rgba(160,120,0,0.3);border-radius:10px;font-size:0.9rem;color:#6B4F00;font-weight:500;cursor:pointer;">
           Fechar
