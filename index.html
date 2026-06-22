@@ -357,7 +357,7 @@
   <section class="hero">
     <div class="eyebrow">✦ seu biscoito da sorte diário ✦</div>
     <h1 class="hero-title">O Universo quer<br>o <em>melhor</em> pra você</h1>
-    <p class="hero-sub" id="heroSub">Veja o que ele tem a dizer hoje. Uma mensagem mística e profunda, gerada especialmente para o seu momento.</p>
+    <p class="hero-sub" id="heroSub">O Universo quer o melhor pra você — e pra quem você gosta. Veja a mensagem de hoje, ou envie um biscoito de presente para alguém especial.</p>
 
     <div class="mood-section" id="moodSection">
       <div class="mood-label">Como você está se sentindo?</div>
@@ -420,9 +420,15 @@
         </button>
       </div>
       <p class="cookie-hint" id="cookieHint">Toque no biscoito para revelar ✦</p>
-      <button onclick="abrirPacotes()" style="margin-top:1rem;padding:12px 28px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:99px;font-family:var(--sans);font-size:0.9rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(160,120,0,0.3);transition:all 0.2s;">
-        ✦ Quero comprar mensagens profundas
-      </button>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:1.25rem;width:100%;max-width:320px;">
+        <button onclick="abrirModalPresenteCapa()" style="padding:15px 20px;background:var(--white);border:2px solid var(--gold);color:var(--gold-dim);border-radius:14px;font-family:var(--sans);font-size:0.98rem;font-weight:700;cursor:pointer;letter-spacing:0.02em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(160,120,0,0.15);">
+          🎁 Enviar um biscoito para alguém
+        </button>
+        <button onclick="abrirPacotes()" style="padding:12px 20px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:99px;font-family:var(--sans);font-size:0.9rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(160,120,0,0.3);">
+          ✦ Quero comprar mensagens profundas
+        </button>
+      </div>
     </div>
 
     <!-- RESULTADO -->
@@ -1625,6 +1631,53 @@
     document.body.appendChild(overlay);
   }
 
+  function abrirModalPresenteCapa() {
+    // Se já sabemos o nome do remetente, vai direto pro modal padrão
+    if (currentNome) {
+      abrirModalPresente();
+      return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.id = 'presenteModalCapa';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0;';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:20px 20px 0 0;padding:1.75rem 1.5rem 2rem;max-width:480px;width:100%;text-align:center;position:relative;max-height:92vh;overflow-y:auto;">
+        <button onclick="document.getElementById('presenteModalCapa').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#4A3F2F;line-height:1;">✕</button>
+        <div style="font-size:2rem;margin-bottom:0.5rem;">🎁</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:#1A1208;margin-bottom:0.5rem;">Enviar biscoito de presente</h3>
+        <p style="font-size:0.9rem;color:#3A3020;margin-bottom:1.25rem;line-height:1.5;">Mande sorte e uma mensagem mística para alguém especial 💛</p>
+        <input id="presenteDeNome" type="text" placeholder="Seu nome" style="width:100%;padding:13px 16px;border:1.5px solid rgba(160,120,0,0.4);border-radius:10px;font-size:0.95rem;color:#1A1208;background:#FBF7F0;outline:none;margin-bottom:10px;font-family:'DM Sans',sans-serif;">
+        <input id="presenteParaNomeCapa" type="text" placeholder="Nome de quem vai receber (opcional)" style="width:100%;padding:13px 16px;border:1.5px solid rgba(160,120,0,0.4);border-radius:10px;font-size:0.95rem;color:#1A1208;background:#FBF7F0;outline:none;margin-bottom:1rem;font-family:'DM Sans',sans-serif;">
+        <button id="btnGerarPresenteCapa" onclick="gerarPresenteCapa()" style="width:100%;padding:14px;background:linear-gradient(135deg,#A07800,#6B4F00);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.03em;">
+          ✦ Criar e enviar pelo WhatsApp
+        </button>
+        <p style="font-size:0.75rem;color:#6B4F00;margin-top:0.75rem;">A mensagem já vem pronta — a pessoa recebe um link especial do biscoito.</p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  async function gerarPresenteCapa() {
+    const nome = document.getElementById('presenteDeNome').value.trim();
+    if (!nome) {
+      alert('Digite seu nome para que a pessoa saiba quem enviou o presente 💛');
+      return;
+    }
+    currentNome = nome;
+    try { localStorage.setItem('mdv_nome', currentNome); } catch(e) {}
+
+    const paraNome = document.getElementById('presenteParaNomeCapa').value.trim();
+    const btn = document.getElementById('btnGerarPresenteCapa');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Preparando presente...';
+
+    await criarEEnviarPresente(paraNome, () => {
+      const modal = document.getElementById('presenteModalCapa');
+      if (modal) modal.remove();
+    }, btn, '✦ Criar e enviar pelo WhatsApp');
+  }
+
   async function gerarPresente() {
     const btn = document.getElementById('btnGerarPresente');
     const paraNome = document.getElementById('presenteParaNome').value.trim();
@@ -1632,6 +1685,13 @@
     btn.disabled = true;
     btn.innerHTML = '⏳ Preparando presente...';
 
+    await criarEEnviarPresente(paraNome, () => {
+      const modal = document.getElementById('presenteModal');
+      if (modal) modal.remove();
+    }, btn, '✦ Criar e enviar pelo WhatsApp');
+  }
+
+  async function criarEEnviarPresente(paraNome, onSuccess, btnRef, btnTextoOriginal) {
     // Sorteia uma frase mística para o presente (do banco gratuito)
     const indice = Math.floor(Math.random() * FRASES.length);
     let frase = FRASES[indice];
@@ -1660,14 +1720,13 @@
 
       const textoWhats = `🥠 ${destinatario}${remetente} te enviou um biscoito da sorte!\n\nPensei em você hoje e quis compartilhar uma mensagem do universo 💛\n\nAbra aqui:\n${linkPresente}`;
 
-      document.getElementById('presenteModal').remove();
+      if (onSuccess) onSuccess();
       window.open('https://wa.me/?text=' + encodeURIComponent(textoWhats), '_blank');
 
     } catch(e) {
       console.error(e);
       alert('Não foi possível criar o presente agora. Tente novamente em alguns instantes.');
-      btn.disabled = false;
-      btn.innerHTML = '✦ Criar e enviar pelo WhatsApp';
+      if (btnRef) { btnRef.disabled = false; btnRef.innerHTML = btnTextoOriginal; }
     }
   }
 
