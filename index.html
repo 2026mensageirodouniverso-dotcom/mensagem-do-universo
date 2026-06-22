@@ -8,6 +8,11 @@
   <meta property="og:title" content="Mensagem do Universo">
   <meta property="og:description" content="O Universo quer o melhor pra você. Uma mensagem mística e profunda, gerada especialmente para o seu momento — todo dia.">
   <meta property="og:url" content="https://mensagemdouniverso.com.br">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://mensagemdouniverso.com.br/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:image" content="https://mensagemdouniverso.com.br/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -486,7 +491,11 @@
       <button class="nova-btn" onclick="novaMensagem()">↻ Gerar nova mensagem</button>
       <div id="saldoBiscoitos" style="font-size:0.82rem;color:var(--gold-dim);font-weight:600;text-align:center;margin-top:4px;display:none;"></div>
 
-      <button onclick="abrirPacotes()" style="width:100%;margin-top:1rem;padding:15px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:12px;font-family:var(--sans);font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(160,120,0,0.25);transition:all 0.2s;">
+      <button onclick="abrirModalPresente()" style="width:100%;margin-top:0.75rem;padding:13px;background:var(--white);border:2px solid var(--gold);color:var(--gold-dim);border-radius:12px;font-family:var(--sans);font-size:0.92rem;font-weight:600;cursor:pointer;letter-spacing:0.02em;display:flex;align-items:center;justify-content:center;gap:8px;">
+        🎁 Enviar este biscoito para alguém
+      </button>
+
+      <button onclick="abrirPacotes()" style="width:100%;margin-top:0.75rem;padding:15px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:12px;font-family:var(--sans);font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 20px rgba(160,120,0,0.25);transition:all 0.2s;">
         🥠 Quero comprar mensagens profundas e direcionadas
       </button>
       <p style="font-size:0.75rem;color:var(--ink-soft);text-align:center;margin-top:6px;">Escolha o tema e receba uma mensagem oracular só para você</p>
@@ -660,6 +669,12 @@
 
     // Carrega frases já vistas e saldo
     await carregarFrasesUsadas();
+
+    // Marca que a mensagem gratuita do dia já foi usada (para usuários anônimos)
+    if (!currentEmail) {
+      try { localStorage.setItem('mdv_ultima_msg', new Date().toDateString()); } catch(e) {}
+    }
+
     if (currentEmail) {
       const saldoEl = document.getElementById('saldoBiscoitos');
       if (saldoEl) saldoEl.style.display = 'block';
@@ -1379,28 +1394,54 @@
 
   async function novaMensagem() {
     if (isLoading) return;
+    isLoading = true; // Bloqueia imediatamente para evitar cliques múltiplos
 
     if (currentEmail) {
       const { data } = await sb.from('usuarios').select('biscoitos').eq('email', currentEmail).single();
       const saldo = data ? data.biscoitos : 0;
 
       if (saldo <= 0) {
+        isLoading = false;
         const abrir = confirm('Você não tem mais biscoitos disponíveis.\n\nQuer adquirir um pacote para continuar recebendo mensagens do universo?');
         if (abrir) abrirPacotes();
         return;
       }
 
-      await sb.from('usuarios').update({ biscoitos: saldo - 1 }).eq('email', currentEmail);
-      atualizarSaldoDisplay(saldo - 1);
+      // Update condicional: só debita se o saldo ainda for o mesmo lido agora
+      const { data: atualizado } = await sb.from('usuarios')
+        .update({ biscoitos: saldo - 1 })
+        .eq('email', currentEmail)
+        .eq('biscoitos', saldo) // só aplica se ninguém mudou o saldo entre a leitura e a escrita
+        .select();
 
-      // Abre seletor de tema para biscoitos pagos
+      if (!atualizado || atualizado.length === 0) {
+        // Outra requisição já debitou — evita duplo crédito
+        isLoading = false;
+        alert('Aguarde um momento e tente novamente.');
+        return;
+      }
+
+      atualizarSaldoDisplay(saldo - 1);
+      isLoading = false;
       abrirSeletorTema();
       return;
     }
 
-    // Sem email — frase gratuita aleatória
-    isLoading = true;
+    // Sem email — limitado a 1 mensagem grátis por dia, controlado pelo navegador
+    const hoje = new Date().toDateString();
+    let ultimaData = null;
+    try { ultimaData = localStorage.getItem('mdv_ultima_msg'); } catch(e) {}
+
+    if (ultimaData === hoje) {
+      isLoading = false;
+      const abrir = confirm('Você já recebeu sua mensagem gratuita de hoje! 🥠\n\nVolte amanhã para uma nova mensagem do universo, ou adquira um pacote para receber mensagens profundas agora mesmo.\n\nQuer ver os pacotes?');
+      if (abrir) abrirPacotes();
+      return;
+    }
+
+    try { localStorage.setItem('mdv_ultima_msg', hoje); } catch(e) {}
     await gerarMensagem(true);
+    isLoading = false;
   }
 
   function atualizarSaldoDisplay(saldo) {
@@ -1448,7 +1489,7 @@
       if (data) return data; // Já existe — não cria de novo
       // Só cria se realmente não existe
       const { data: novo } = await sb.from('usuarios')
-        .insert([{ email, nome, biscoitos: 1, total_pago: 0, frases_vistas: [] }])
+        .insert([{ email, nome, biscoitos: 0, total_pago: 0, frases_vistas: [] }])
         .select().single();
       return novo;
     } catch(e) {
@@ -1561,6 +1602,145 @@
       alert('✅ Código Pix copiado!\n\nCole no app do seu banco para pagar.\n\nDepois clique em "Já paguei!" para liberar seus biscoitos.');
     });
   }
+
+  // ===== SISTEMA DE PRESENTE =====
+
+  function abrirModalPresente() {
+    const overlay = document.createElement('div');
+    overlay.id = 'presenteModal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(26,18,8,0.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0;';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:20px 20px 0 0;padding:1.75rem 1.5rem 2rem;max-width:480px;width:100%;text-align:center;position:relative;max-height:92vh;overflow-y:auto;">
+        <button onclick="document.getElementById('presenteModal').remove()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#4A3F2F;line-height:1;">✕</button>
+        <div style="font-size:2rem;margin-bottom:0.5rem;">🎁</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:#1A1208;margin-bottom:0.5rem;">Enviar biscoito de presente</h3>
+        <p style="font-size:0.9rem;color:#3A3020;margin-bottom:1.25rem;line-height:1.5;">Mande sorte e uma mensagem mística para alguém especial 💛</p>
+        <input id="presenteParaNome" type="text" placeholder="Nome de quem vai receber (opcional)" style="width:100%;padding:13px 16px;border:1.5px solid rgba(160,120,0,0.4);border-radius:10px;font-size:0.95rem;color:#1A1208;background:#FBF7F0;outline:none;margin-bottom:1rem;font-family:'DM Sans',sans-serif;">
+        <button id="btnGerarPresente" onclick="gerarPresente()" style="width:100%;padding:14px;background:linear-gradient(135deg,#A07800,#6B4F00);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.03em;">
+          ✦ Criar e enviar pelo WhatsApp
+        </button>
+        <p style="font-size:0.75rem;color:#6B4F00;margin-top:0.75rem;">A mensagem já vem pronta — a pessoa recebe um link especial do biscoito.</p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  async function gerarPresente() {
+    const btn = document.getElementById('btnGerarPresente');
+    const paraNome = document.getElementById('presenteParaNome').value.trim();
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Preparando presente...';
+
+    // Sorteia uma frase mística para o presente (do banco gratuito)
+    const indice = Math.floor(Math.random() * FRASES.length);
+    let frase = FRASES[indice];
+    if (paraNome) {
+      const meio = Math.floor(frase.length / 2);
+      const pontoMeio = frase.indexOf('.', meio);
+      if (pontoMeio !== -1 && pontoMeio < frase.length - 1) {
+        frase = frase.slice(0, pontoMeio + 1) + ` ${paraNome}, ` + frase.slice(pontoMeio + 2).trim();
+      }
+    }
+
+    try {
+      const { data, error } = await sb.from('presentes').insert([{
+        de_nome: currentNome || 'Alguém especial',
+        de_email: currentEmail || null,
+        para_nome: paraNome || null,
+        frase: frase,
+        aberto: false
+      }]).select().single();
+
+      if (error || !data) throw new Error('Erro ao criar presente');
+
+      const linkPresente = `https://mensagemdouniverso.com.br/?presente=${data.id}`;
+      const remetente = currentNome || 'Alguém especial';
+      const destinatario = paraNome ? `${paraNome}, ` : '';
+
+      const textoWhats = `🥠 ${destinatario}${remetente} te enviou um biscoito da sorte!\n\nPensei em você hoje e quis compartilhar uma mensagem do universo 💛\n\nAbra aqui:\n${linkPresente}`;
+
+      document.getElementById('presenteModal').remove();
+      window.open('https://wa.me/?text=' + encodeURIComponent(textoWhats), '_blank');
+
+    } catch(e) {
+      console.error(e);
+      alert('Não foi possível criar o presente agora. Tente novamente em alguns instantes.');
+      btn.disabled = false;
+      btn.innerHTML = '✦ Criar e enviar pelo WhatsApp';
+    }
+  }
+
+  // Detecta se a URL contém um presente e mostra a tela especial
+  async function verificarPresente() {
+    const params = new URLSearchParams(window.location.search);
+    const presenteId = params.get('presente');
+    if (!presenteId) return;
+
+    try {
+      const { data } = await sb.from('presentes').select('*').eq('id', presenteId).single();
+      if (!data) return;
+
+      mostrarTelaPresente(data, presenteId);
+    } catch(e) {
+      console.error('Presente não encontrado', e);
+    }
+  }
+
+  function mostrarTelaPresente(presente, presenteId) {
+    // Esconde o hero normal
+    document.querySelector('.hero').style.display = 'none';
+
+    const overlay = document.createElement('div');
+    overlay.id = 'telaPresente';
+    overlay.style.cssText = 'min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;text-align:center;position:relative;z-index:10;';
+
+    const remetente = presente.de_nome || 'Alguém especial';
+    const destinatario = presente.para_nome ? presente.para_nome : 'você';
+
+    overlay.innerHTML = `
+      <div style="font-size:1rem;letter-spacing:0.2em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:1rem;">✦ você recebeu um presente ✦</div>
+      <div style="font-size:3.5rem;margin-bottom:1rem;">🥠</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:400;color:var(--ink);margin-bottom:1rem;max-width:500px;">
+        ${remetente} enviou um biscoito da sorte para ${destinatario}
+      </h1>
+      <p style="font-size:1rem;color:var(--ink-mid);margin-bottom:2rem;max-width:400px;line-height:1.6;">Toque no biscoito para revelar a mensagem que ${remetente} preparou para você 💛</p>
+      <button id="btnAbrirPresente" onclick="abrirPresenteRecebido('${presenteId}')" style="background:none;border:none;cursor:pointer;font-size:5rem;animation:cookie-float 4.5s ease-in-out infinite;">🥠</button>
+      <p style="font-size:0.85rem;color:var(--ink-soft);margin-top:1rem;">Toque para abrir ✦</p>
+      <div id="presenteResultado" style="display:none;max-width:480px;margin-top:1.5rem;"></div>
+    `;
+
+    document.querySelector('main').prepend(overlay);
+  }
+
+  async function abrirPresenteRecebido(presenteId) {
+    const btn = document.getElementById('btnAbrirPresente');
+    btn.style.animation = 'none';
+    btn.disabled = true;
+
+    // Marca como aberto no Supabase
+    try { await sb.from('presentes').update({ aberto: true }).eq('id', presenteId); } catch(e) {}
+
+    const { data } = await sb.from('presentes').select('*').eq('id', presenteId).single();
+
+    document.querySelector('p[style*="Toque para abrir"]').style.display = 'none';
+
+    const resultado = document.getElementById('presenteResultado');
+    resultado.style.display = 'block';
+    resultado.innerHTML = `
+      <div style="background:linear-gradient(160deg,#1A1208,#2C2218);border-radius:20px;padding:2.5rem 2rem;color:#fff;margin-bottom:1.5rem;">
+        <div style="font-size:0.75rem;letter-spacing:0.15em;color:var(--gold-light);text-transform:uppercase;margin-bottom:1.25rem;">✦ Mensagem do Universo ✦</div>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;line-height:1.7;color:#fff;">${data.frase}</p>
+      </div>
+      <p style="font-size:0.95rem;color:var(--ink-mid);margin-bottom:1.5rem;">Gostou? Você também pode receber sua mensagem todo dia, gratuitamente.</p>
+      <button onclick="window.location.href='https://mensagemdouniverso.com.br'" style="width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;">
+        ✦ Quero meu biscoito da sorte
+      </button>
+    `;
+  }
+
+  // Roda a verificação ao carregar a página
+  verificarPresente();
 
   function getShareText() {
     const nome = currentNome ? `\n\n✦ ${currentNome}` : '';
