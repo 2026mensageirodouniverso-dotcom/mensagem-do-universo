@@ -1691,7 +1691,58 @@
     }, btn, '✦ Criar e enviar pelo WhatsApp');
   }
 
+  function fecharModaisPresente() {
+    const m1 = document.getElementById('presenteModal');
+    const m2 = document.getElementById('presenteModalCapa');
+    if (m1) m1.remove();
+    if (m2) m2.remove();
+  }
+
   async function criarEEnviarPresente(paraNome, onSuccess, btnRef, btnTextoOriginal) {
+    // Verifica se já usou o presente grátis do dia (controlado pelo navegador)
+    const hoje = new Date().toDateString();
+    let ultimoPresente = null;
+    try { ultimoPresente = localStorage.getItem('mdv_ultimo_presente'); } catch(e) {}
+
+    const jaUsouGratisHoje = ultimoPresente === hoje;
+    let usandoBiscoitoPago = false;
+
+    if (jaUsouGratisHoje) {
+      // Já enviou o presente grátis hoje — precisa de biscoito pago para enviar outro
+      if (!currentEmail) {
+        if (btnRef) { btnRef.disabled = false; btnRef.innerHTML = btnTextoOriginal; }
+        const abrir = confirm('Você já enviou seu biscoito de presente gratuito hoje! 🥠\n\nPara enviar mais presentes, cadastre-se e adquira um pacote de biscoitos.\n\nQuer ver os pacotes?');
+        if (abrir) { fecharModaisPresente(); abrirPacotes(); }
+        return;
+      }
+
+      const { data: usuario } = await sb.from('usuarios').select('biscoitos').eq('email', currentEmail).single();
+      const saldo = usuario ? usuario.biscoitos : 0;
+
+      if (saldo <= 0) {
+        if (btnRef) { btnRef.disabled = false; btnRef.innerHTML = btnTextoOriginal; }
+        const abrir = confirm('Você já enviou seu biscoito de presente gratuito hoje! 🥠\n\nVocê não tem biscoitos disponíveis para enviar outro. Quer adquirir um pacote?');
+        if (abrir) { fecharModaisPresente(); abrirPacotes(); }
+        return;
+      }
+
+      // Debita 1 biscoito pago para enviar o presente extra (com proteção contra race condition)
+      const { data: atualizado } = await sb.from('usuarios')
+        .update({ biscoitos: saldo - 1 })
+        .eq('email', currentEmail)
+        .eq('biscoitos', saldo)
+        .select();
+
+      if (!atualizado || atualizado.length === 0) {
+        if (btnRef) { btnRef.disabled = false; btnRef.innerHTML = btnTextoOriginal; }
+        alert('Aguarde um momento e tente novamente.');
+        return;
+      }
+
+      usandoBiscoitoPago = true;
+      atualizarSaldoDisplay(saldo - 1);
+    }
+
     // Sorteia uma frase mística para o presente (do banco gratuito)
     const indice = Math.floor(Math.random() * FRASES.length);
     let frase = FRASES[indice];
@@ -1713,6 +1764,11 @@
       }]).select().single();
 
       if (error || !data) throw new Error('Erro ao criar presente');
+
+      // Marca o presente grátis do dia como usado (só se não usou biscoito pago)
+      if (!usandoBiscoitoPago) {
+        try { localStorage.setItem('mdv_ultimo_presente', hoje); } catch(e) {}
+      }
 
       const linkPresente = `https://mensagemdouniverso.com.br/?presente=${data.id}`;
       const remetente = currentNome || 'Alguém especial';
